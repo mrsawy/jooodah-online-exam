@@ -1,0 +1,25 @@
+@import url(../node_modules/semantic-ui-css/semantic.min.css);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+
+
+
+
+
+/* // <uniquifier>: Use a unique and descriptive class name
+// <weight>: Use a value from 200 to 1000 */
+
+.cairo-ar {
+  font-family: "Cairo", sans-serif !important;
+  font-optical-sizing: auto;
+  font-weight: 700 !important;
+  font-style: normal;
+  font-variation-settings:
+    "slnt" 0;
+}
+
+
+
