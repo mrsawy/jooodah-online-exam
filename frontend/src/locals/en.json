@@ -1,0 +1,23 @@
+{
+  "greeting": "Hello, World!",
+  "welcome": "Welcome to my app!",
+  "Show_Instructions": "Show Instructions ",
+  "arabic": "Arabic (AR)",
+  "english": "English (US)",
+  "Quiz_Beginning": " Quiz Beginning",
+  "The_Quiz": "The Quiz",
+  "Full_Name": "Full Name",
+  "Phone_Number": "Phone Number",
+  "Email_Adress": "Email Address",
+  "Please_select_the_language_of_the_exam": "Please select the language of the exam",
+  "Processing": "Processing",
+  "Start_Now": "Start Now",
+  "name": "name",
+  "phone": "phone",
+  "email": "email",
+  "pauses_left": "Number of pauses left",
+  "Oops! Time's up.": "للأسف !! إنتهى الوقت",
+  "Hope You did well .": "شكرا لوقتك",
+  "Quite": "Quite",
+  "which position are you applying for ?": "which position are you applying for ?"
+}

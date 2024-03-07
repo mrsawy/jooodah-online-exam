@@ -1,21 +1,26 @@
-const getLetter = number => {
+const getLetter = (number, currentL) => {
   let letter;
-
+  console.log(currentL)
+  if (currentL && typeof currentL?.toLowerCase == `function` && currentL?.toLowerCase()) {
+    var currentLang = currentL?.toLowerCase();
+  } else {
+    var currentLang = "";
+  }
   switch (number) {
     case 0:
-      letter = 'A.';
+      letter = currentLang == `ar` ? `أ.` : "A.";
       break;
     case 1:
-      letter = 'B.';
+      letter = currentLang == `ar` ? `ب.` : "B.";
       break;
     case 2:
-      letter = 'C.';
+      letter = currentLang == `ar` ? `ج.` : "C.";
       break;
     case 3:
-      letter = 'D.';
+      letter = currentLang == `ar` ? `د.` : "D.";
       break;
     default:
-      letter = null;
+      letter = currentLang == `ar` ? `أ.` : null;
       break;
   }
 

@@ -1,6 +1,6 @@
 export default ({ levelId, examLang, levels }) => {
-  //   console.log(level, examLang);
   let chosenLevel = levels.find((l) => l._id == levelId);
+  console.log(chosenLevel);
   let questions = chosenLevel?.questions.map((question) => {
     return {
       _id: question?._id,
@@ -10,5 +10,9 @@ export default ({ levelId, examLang, levels }) => {
     };
   });
 
-  return { questions, numberOfMinutes: chosenLevel?.numberOfMinutes };
+  return {
+    questions,
+    numberOfMinutes: chosenLevel?.numberOfMinutes,
+    pauseTime: chosenLevel?.pauseTime,
+  };
 };

@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
   {
-    _id: {
-      type: String, // Use String as the type for _id
-      required: true,
-    },
     name: {
       type: String,
       required: true,
@@ -19,15 +15,15 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    job: {
-      type: String,
-      required: true,
-    },
     result: {
       grade: Number,
       fullGrade: Number,
-      levelId: { type: mongoose.Types.ObjectId, ref: "level" },
+      levelId: { type: mongoose.Types.ObjectId },
       levelName: String,
+      timeTaken: Number,
+      totalQuestions: Number,
+      correctAnswers: Number,
+      questionsAndAnswers: [],
     },
     allowTestAgain: {
       type: Number,

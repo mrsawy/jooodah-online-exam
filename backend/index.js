@@ -12,6 +12,11 @@ const { PORT = 3000 } = process.env;
 app.use(cors());
 app.use(express.json());
 
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 app.use("/api", mainApiRoute);
 
 app.get("/", (req, res) => {

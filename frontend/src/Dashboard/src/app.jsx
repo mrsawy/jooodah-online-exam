@@ -15,6 +15,8 @@ import { useScrollToTop } from "./hooks/use-scroll-to-top";
 import Router from "./routes/sections";
 import ThemeProvider from "./theme";
 import { getLevelThunk } from "./store/level/levelSlice";
+import { getAllUsers } from "./store/user/userSlice";
+import { getSite } from "./store/site/siteSlice";
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +25,8 @@ export default function App() {
 
   useEffect(() => {
     dispatch(getLevelThunk());
+    dispatch(getAllUsers());
+    dispatch(getSite());
   }, [dispatch]);
   useScrollToTop();
 

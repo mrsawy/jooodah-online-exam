@@ -7,8 +7,20 @@ import { api_url } from "../../utils/base_url";
 
 export const createUserService = async (args) => {
   try {
-    const response = await axios.post(`${api_url}/user` , args);
-    // console.log(response.data);
+    let { name, phone, email } = args?.user;
+    let { questionsAndAnswers, totalQuestions, correctAnswers, timeTaken, level } = args;
+    let result = {
+      timeTaken,
+      correctAnswers,
+      totalQuestions,
+      questionsAndAnswers,
+      levelId: level?.id,
+      levelName: level?.name,
+    };
+
+    let userFormData = { name, phone, email, result };
+
+    const response = await axios.post(`${api_url}/users`, { userFormData });
     return response.data;
   } catch (e) {
     console.log(`err=>`, e);

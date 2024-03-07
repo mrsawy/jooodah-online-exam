@@ -1,17 +1,20 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/no-extraneous-dependencies */
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore } from "@reduxjs/toolkit";
 
-import timeReducer from './time/timeSlice';
-import mainReducer from './main/mainSlice';
-import levelReducer from './level/levelSlice';
-import questionSlice from './question/questionSlice';
+// import timeReducer from './time/timeSlice';
+import levelReducer from "./level/levelSlice";
+import questionSlice from "./question/questionSlice";
+import userSlice from "./user/userSlice";
+import authSlice from "./auth/authSlice";
+import siteSlice from "./site/siteSlice";
 
 export const store = configureStore({
   reducer: {
     levels: levelReducer,
-    main: mainReducer,
-    time: timeReducer,
+    user: userSlice,
     questions: questionSlice,
+    auth: authSlice,
+    site: siteSlice,
   },
 });

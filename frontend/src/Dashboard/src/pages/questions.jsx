@@ -8,7 +8,7 @@ export default function ProductsPage() {
   return (
     <>
       <Helmet>
-        <title> Working Hours </title>
+        <title> Questions </title>
       </Helmet>
 
       <QuestionsView />

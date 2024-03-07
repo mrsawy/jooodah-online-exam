@@ -15,9 +15,9 @@ const initialState = {
   message: "",
 };
 
-export const createUser = createAsyncThunk("user/createUser", async (_, thunkAPI) => {
+export const createUser = createAsyncThunk("user/createUser", async (args, thunkAPI) => {
   try {
-    const user = await createUserService();
+    const user = await createUserService(args);
     return user;
   } catch (error) {
     return thunkAPI.rejectWithValue(error);
@@ -47,7 +47,7 @@ export const userSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.levels = action?.payload ? action?.payload : [];
+        // state.user = action?.payload ? action?.payload : null;
       })
       .addCase(createUser.rejected, (state, action) => {
         state.isLoading = false;

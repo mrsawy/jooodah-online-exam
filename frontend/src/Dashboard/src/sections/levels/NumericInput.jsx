@@ -1,12 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import TextField from '@mui/material/TextField';
+import TextField from "@mui/material/TextField";
 
-
-function NumericInput({label}) {
+function NumericInput({ label, onChange }) {
   const handleInputChange = (event) => {
-    const value = event.target.value.replace(/[^0-9]/g, '');
+    const value = event.target.value.replace(/[^0-9]/g, "");
     event.target.value = value;
   };
   return (
@@ -14,14 +13,19 @@ function NumericInput({label}) {
       label={label}
       type="text" // Use type="text" to allow custom input handling
       inputProps={{
-        pattern: '[0-9]*', // Use the pattern attribute for better mobile support
+        pattern: "[0-9]*", // Use the pattern attribute for better mobile support
       }}
-      onChange={handleInputChange}
+      onChange={(e) => {
+        handleInputChange(e);
+        if (onChange && typeof onChange == `function`) {
+          onChange(e);
+        }
+      }}
     />
   );
 }
 
 NumericInput.propTypes = {
-    label: PropTypes.string.isRequired,
-  };
+  label: PropTypes.string.isRequired,
+};
 export default NumericInput;

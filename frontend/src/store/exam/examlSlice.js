@@ -9,6 +9,9 @@ const initialState = {
   levels: [],
   answers: [],
   currentQuestions: null,
+  pauseTime: { value: null, numberOfPauses: null },
+  numberOfPausesLeft: 0,
+  examIsPaused: false,
   currentLevel: null,
   currentExamTime: null,
   isLoading: false,
@@ -31,6 +34,19 @@ export const examSlice = createSlice({
   name: "exam",
   initialState,
   reducers: {
+    pauseExam: (state, action) => {
+      if (state.numberOfPausesLeft > 0) {
+        state.numberOfPausesLeft = state.numberOfPausesLeft - 1;
+        state.examIsPaused = true;
+        setTimeout(() => {
+          state.examIsPaused = false;
+        }, state?.pauseTime?.value * 60);
+      }
+    },
+    setPauseTime: (state, action) => {
+      state.pauseTime = action.payload;
+      state.numberOfPausesLeft = action?.payload?.numberOfPauses;
+    },
     addAnswer: (state, action) => {
       const { questionId, questionValue, answer, correctAnswer, isCorrect } = action?.payload;
       state.answers
@@ -79,5 +95,12 @@ export const examSlice = createSlice({
 });
 
 export default examSlice.reducer;
-export const { setLevelIsSet, setLevel, addLevelItem, deleteLevelItem, editLevelItem } =
-  examSlice.actions;
+export const {
+  setPauseTime,
+  setLevelIsSet,
+  setLevel,
+  addLevelItem,
+  deleteLevelItem,
+  editLevelItem,
+  pauseExam
+} = examSlice.actions;

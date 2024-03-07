@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Container,
@@ -12,14 +13,28 @@ import {
   Header,
 } from "semantic-ui-react";
 import he from "he";
+import { useTranslation } from "react-i18next";
+import { Button as PrimeButton } from "primereact/button";
+import Swal from "sweetalert2";
 
 import Countdown from "../Countdown";
 import { getLetter } from "../../utils";
+import { pauseExam } from "../../store/exam/examlSlice";
+import PauseModal from "../PauseModal";
 
-const Quiz = ({ data, countdownTime, endQuiz }) => {
+const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
+  const { i18n, t } = useTranslation();
+
+  let currentLang = i18n.language;
+
+  let screenWidth = window.innerWidth;
+
+  const dispatch = useDispatch();
+  let { numberOfPausesLeft, examIsPaused } = useSelector((s) => s?.exam);
+
   const [questionIndex, setQuestionIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [userSlectedAns, setUserSlectedAns] = useState(null);
+  const [userSlectedAns, setUserSlectedAns] = useState([]);
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
   const [timeTaken, setTimeTaken] = useState(null);
 
@@ -27,8 +42,10 @@ const Quiz = ({ data, countdownTime, endQuiz }) => {
     if (questionIndex > 0) window.scrollTo({ top: 0, behavior: "smooth" });
   }, [questionIndex]);
 
-  const handleItemClick = (e, { name }) => {
-    setUserSlectedAns(name);
+  const handleItemClick = (e, ansData) => {
+    console.log(ansData);
+    let { name } = ansData;
+    setUserSlectedAns((p) => [...p.filter((ele) => ele?.name !== name), { name }]);
     let point = 0;
     if (name === he.decode(data[questionIndex].correct_answer)) {
       point = 1;
@@ -50,13 +67,10 @@ const Quiz = ({ data, countdownTime, endQuiz }) => {
   };
 
   const handleNext = () => {
+    console.log(questionIndex);
+    console.log(data.length);
+    console.log(data);
     if (questionIndex === data.length - 1) {
-      console.log({
-        totalQuestions: data.length,
-        correctAnswers,
-        timeTaken,
-        questionsAndAnswers,
-      });
       return endQuiz({
         totalQuestions: data.length,
         correctAnswers,
@@ -64,34 +78,42 @@ const Quiz = ({ data, countdownTime, endQuiz }) => {
         questionsAndAnswers,
       });
     }
-
     setQuestionIndex(questionIndex + 1);
-    setUserSlectedAns(null);
   };
-
   const handlePrev = () => {
     if (questionIndex > 0) {
-      setUserSlectedAns(null);
       setQuestionIndex(questionIndex - 1);
     }
   };
-
   const timeOver = (timeTaken) => {
-    console.log({
-      totalQuestions: data.length,
-      correctAnswers,
-      timeTaken,
-      questionsAndAnswers,
-    });
-    return endQuiz({
-      totalQuestions: data.length,
-      correctAnswers,
-      timeTaken,
-      questionsAndAnswers,
-    });
+    return endQuiz(
+      {
+        totalQuestions: data.length,
+        correctAnswers,
+        timeTaken,
+        questionsAndAnswers,
+      },
+      { timeOver: true }
+    );
   };
   const uniqueOptions = {};
-
+  const handleQuite = () => {
+    Swal.fire({
+      // title: "هل تريد الاستمرار؟",
+      icon: "question",
+      title: t(`Are you sure you want to quite ?`),
+      iconHtml: "؟",
+      confirmButtonText: t("yes"),
+      cancelButtonText: t("no"),
+      showCancelButton: true,
+      showCloseButton: true,
+    }).then((result) => {
+      console.log(result)
+      if (result.isConfirmed) {
+        onQuite();
+      }
+    });
+  };
   return (
     <Item.Header>
       <Container>
@@ -99,27 +121,56 @@ const Quiz = ({ data, countdownTime, endQuiz }) => {
           <Item.Group divided>
             <Item>
               <Item.Content>
-                <Item.Extra>
-                  <Header as="h1" block floated="left">
-                    <Icon name="info circle" />
-                    <Header.Content>
-                      {`Question No.${questionIndex + 1} of ${data.length}`}
-                    </Header.Content>
-                  </Header>
-                  <Countdown
-                    countdownTime={countdownTime}
-                    timeOver={timeOver}
-                    setTimeTaken={setTimeTaken}
-                  />
+                <Item.Extra className="text-center flex justify-between items-center flex-wrap">
+                  <div className="m-auto flex justify-center items-center  mb-3 lg:mb-0">
+                    <Header as="h3" block floated="left" className="m-auto">
+                      <Icon name="info circle" />
+                      <Header.Content className="m-auto">
+                        {`${t(`Question No`)} .${questionIndex + 1} ${t(`of`)} ${data.length}`}
+                      </Header.Content>
+                    </Header>
+                  </div>
+
+                  {numberOfPausesLeft > 0 && !examIsPaused && (
+                    <div className="m-auto  mb-3 lg:mb-0 flex flex-col">
+                      <label className="text-lg">
+                        {t(`pauses_left`)}: {numberOfPausesLeft}
+                      </label>
+                      <Button
+                        className="p-3 "
+                        icon
+                        labelPosition="left"
+                        onClick={() => {
+                          dispatch(pauseExam());
+                        }}
+                      >
+                        <Icon name="pause" />
+                        {t(`Pause`)}
+                      </Button>
+                    </div>
+                  )}
+                  <div className="m-auto flex gap-6 items-center justify-center flex-wrap ">
+                    <Countdown
+                      countdownTime={countdownTime}
+                      timeOver={timeOver}
+                      setTimeTaken={setTimeTaken}
+                    />
+
+                    <button onClick={handleQuite} class="ui inverted red button transition-all">
+                      {t(`Quite`)}
+                    </button>
+
+                    {examIsPaused && <PauseModal />}
+                  </div>
                 </Item.Extra>
                 <br />
                 <Item.Meta>
                   <Message size="huge" floating>
-                    <b>{`Q. ${he.decode(data[questionIndex]?.question)}`}</b>
+                    <b>{`${t(`Q`)}. ${he.decode(data[questionIndex]?.question)}`}</b>
                   </Message>
                   <br />
                   <Item.Description>
-                    <h3>Please choose one of the following answers:</h3>
+                    <h3>{t(`Please choose one of the following answers:`)}</h3>
                   </Item.Description>
                   <Divider />
                   <Menu vertical fluid size="massive">
@@ -134,14 +185,14 @@ const Quiz = ({ data, countdownTime, endQuiz }) => {
                         return false;
                       })
                       .map((option, i) => {
-                        const letter = getLetter(i);
+                        const letter = getLetter(i, currentLang);
                         const decodedOption = he.decode(option);
 
                         return (
                           <Menu.Item
                             key={decodedOption}
                             name={decodedOption}
-                            active={userSlectedAns === decodedOption}
+                            active={userSlectedAns?.map((e) => e?.name).includes(decodedOption)}
                             onClick={handleItemClick}
                           >
                             <b style={{ marginRight: "8px" }}>{letter}</b>
@@ -153,25 +204,52 @@ const Quiz = ({ data, countdownTime, endQuiz }) => {
                 </Item.Meta>
                 <Divider />
                 <Item.Extra>
-                  <Button
-                    primary
-                    content="Next"
-                    onClick={handleNext}
-                    floated="right"
-                    size="big"
-                    icon="right chevron"
-                    labelPosition="right"
-                  />
-                  <Button
-                    primary
-                    content="Previous"
-                    onClick={handlePrev}
-                    floated="left"
-                    size="big"
-                    icon="left chevron"
-                    labelPosition="left"
-                    disable={questionIndex}
-                  />
+                  {!(questionIndex + 1 == data.length) ? (
+                    <div>
+                      <Button
+                        primary
+                        content={t("Next")}
+                        onClick={handleNext}
+                        floated="right"
+                        size={screenWidth < 600 ? "medium" : `big`}
+                        icon="right chevron"
+                        labelPosition="right"
+                      />
+                      <Button
+                        primary
+                        content={t("Skip")}
+                        onClick={handleNext}
+                        floated="right"
+                        size={screenWidth < 600 ? "medium" : `big`}
+                        icon="right chevron"
+                        labelPosition="right"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <Button
+                        primary
+                        content={t("Finish")}
+                        onClick={handleNext}
+                        floated="right"
+                        size={screenWidth < 600 ? "medium" : `big`}
+                        icon="right chevron"
+                        labelPosition="right"
+                      />
+                    </div>
+                  )}
+                  {questionIndex > 0 && (
+                    <Button
+                      primary
+                      content={t("Previous")}
+                      onClick={handlePrev}
+                      floated="left"
+                      size={screenWidth < 600 ? "medium" : `big`}
+                      icon="left chevron"
+                      labelPosition="left"
+                      disable={questionIndex}
+                    />
+                  )}
                 </Item.Extra>
               </Item.Content>
             </Item>

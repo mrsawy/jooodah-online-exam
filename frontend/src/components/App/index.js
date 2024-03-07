@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import Swal from "sweetalert2";
 
 import Layout from "../Layout";
 import Loader from "../Loader";
@@ -7,11 +9,16 @@ import Main from "../Main";
 import Quiz from "../Quiz";
 import Result from "../Result";
 
-import { shuffle } from "../../utils";
 import { getExamData } from "../../store/exam/examlSlice";
-import { setResultData } from "./../../store/user/userSlice";
+import { createUser, setResultData as setResultDataRedux } from "./../../store/user/userSlice";
 
 const App = () => {
+  const { i18n, t } = useTranslation();
+
+  useEffect(() => {
+    document.body.dir = i18n.language === "ar" ? "rtl" : "ltr";
+  }, [i18n.language]);
+
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(null);
   const [data, setData] = useState(null);
@@ -19,8 +26,14 @@ const App = () => {
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
   const [resultData, setResultData] = useState(null);
+  const [isQuite, setIsQuite] = useState(null);
 
+  const onQuite = () => {
+    setIsQuite(true);
+  };
   const { currentLevel } = useSelector((s) => s?.exam);
+  const { user } = useSelector((s) => s?.users);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -28,23 +41,34 @@ const App = () => {
   }, []);
   const startQuiz = (data, countdownTime) => {
     setLoadingMessage({
-      title: "Loading your quiz...",
-      message: "It won't be long!",
+      title: t("Loading your quiz..."),
+      message: t("It won't be long!"),
     });
     setCountdownTime(countdownTime);
     setData(data);
     setIsQuizStarted(true);
   };
 
-  const endQuiz = (resultData) => {
-    console.log(`currLevel=>`, currentLevel, `resData=>`, resultData);
-    dispatch(setResultData({ level: currentLevel, ...resultData }));
+  const endQuiz = (resultData, options) => {
+    if (
+      resultData?.questionsAndAnswers?.length !== resultData?.totalQuestions &&
+      !options?.timeOver
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: `${t(`Error`)}!`,
+        text: t("Please Answer All Questions."),
+      });
+      return;
+    }
+
+    dispatch(setResultDataRedux({ level: currentLevel, ...resultData }));
+    dispatch(createUser({ level: currentLevel, ...resultData, user }));
     setLoading(true);
     setLoadingMessage({
-      title: "Fetching your results...",
-      message: "Just a moment!",
+      title: t("Fetching your results..."),
+      message: t("Just a moment!"),
     });
-
     setTimeout(() => {
       setIsQuizStarted(false);
       setIsQuizCompleted(true);
@@ -53,55 +77,14 @@ const App = () => {
     }, 2000);
   };
 
-  const replayQuiz = () => {
-    setLoading(true);
-    setLoadingMessage({
-      title: "Getting ready for round two.",
-      message: "It won't take long!",
-    });
-
-    const shuffledData = shuffle(data);
-    shuffledData.forEach((element) => {
-      element.options = shuffle(element.options);
-    });
-
-    setData(shuffledData);
-
-    setTimeout(() => {
-      setIsQuizStarted(true);
-      setIsQuizCompleted(false);
-      setResultData(null);
-      setLoading(false);
-    }, 1000);
-  };
-
-  const resetQuiz = () => {
-    setLoading(true);
-    setLoadingMessage({
-      title: "Loading the home screen.",
-      message: "Thank you for playing!",
-    });
-
-    setTimeout(() => {
-      setData(null);
-      setCountdownTime(null);
-      setIsQuizStarted(false);
-      setIsQuizCompleted(false);
-      setResultData(null);
-      setLoading(false);
-    }, 1000);
-  };
-
   return (
     <Layout>
       {loading && <Loader {...loadingMessage} />}
       {!loading && !isQuizStarted && !isQuizCompleted && <Main startQuiz={startQuiz} />}
-      {!loading && isQuizStarted && (
-        <Quiz data={data} countdownTime={countdownTime} endQuiz={endQuiz} />
+      {!loading && isQuizStarted && !isQuite && (
+        <Quiz onQuite={onQuite} data={data} countdownTime={countdownTime} endQuiz={endQuiz} />
       )}
-      {!loading && isQuizCompleted && (
-        <Result {...resultData} replayQuiz={replayQuiz} resetQuiz={resetQuiz} />
-      )}
+      {((!loading && isQuizCompleted) || isQuite) && <Result {...resultData} />}
     </Layout>
   );
 };

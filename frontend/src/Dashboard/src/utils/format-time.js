@@ -25,3 +25,35 @@ export function fToNow(date) {
       })
     : '';
 }
+
+
+export function formatTimeCreatedAt(timestampString) {
+  const timestamp = new Date(timestampString);
+
+  const options = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZone: 'Asia/Riyadh', // Time zone for Saudi Arabia
+  };
+
+  return timestamp.toLocaleString('en-US', options);
+}
+
+
+export function timeTakenFormat(s) {
+  let seconds = +s/1000;
+  if (typeof seconds !== "number" || seconds < 0) {
+    return "Invalid input";
+  }
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const formattedTime = `${hours}h ${minutes}m ${remainingSeconds}s`;
+  return formattedTime;
+}
