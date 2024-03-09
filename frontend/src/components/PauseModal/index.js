@@ -24,7 +24,7 @@ function PauseModal({ className, visible, timeOver }) {
         header={t("Pause timer")}
         visible={vis}
         //   style={{ width: "50vw" }}
-        onHide={() => setVisible(true)}
+        onHide={() => setVisible(false)}
         className="  w-full md:w-3/5 instructionModalWidth "
       >
         {/* <div dangerouslySetInnerHTML={{ __html: content }} /> */}

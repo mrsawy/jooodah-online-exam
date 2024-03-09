@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
+import SendIcon from "@mui/icons-material/Send";
+
 import Swal from "sweetalert2";
 import { setLevel, setPauseTime } from "./../../store/exam/examlSlice";
 import { setUserData } from "./../../store/user/userSlice";
 import { api_url } from "./../../utils/base_url";
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
+import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOutlined";
+import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import countries from "./CountryCodeIntput/countries.json";
 
 // import InstructionModal from "./../InstructionModal";
@@ -18,9 +24,13 @@ import {
   Item,
   Dropdown,
   Divider,
-  Button,
+  // Button,
   Message,
 } from "semantic-ui-react";
+import Button from "@mui/material/Button";
+
+// import { Button } from 'primereact/button';
+
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import * as yup from "yup";
@@ -271,15 +281,27 @@ const Main = ({ startQuiz }) => {
               </Item.Meta>
               <Divider />
               <Item.Extra>
-                <Button
-                  primary
-                  size="big"
-                  icon="play"
-                  labelPosition={currLang == `en` ? "left" : `right`}
-                  content={processing ? t("Processing") : t("Start_Now")}
+                {/* <Button
+                  // primary
+                  // size="big"
+                  icon="pi-caret-right"
+                  severity="info"
+                  // labelPosition={currLang == `en` ? "left" : `right`}
+                  label={processing ? t("Processing") : t("Start_Now")}
                   onClick={fetchData}
                   disabled={processing}
-                />
+                /> */}
+                <Button
+                  onClick={fetchData}
+                  disabled={processing}
+                  variant="contained"
+                  // endIcon={<SendIcon />}
+                  endIcon={currLang == `ar` ? null : <SendIcon />}
+                  startIcon={currLang == `en` ? null : <SendIcon />}
+                  className={currLang == `ar` && "flex gap-3"}
+                >
+                  {processing ? t("Processing") : t("Start_Now")}
+                </Button>
               </Item.Extra>
             </Item.Content>
           </Item>

@@ -8,7 +8,7 @@ export default function AppPage() {
   return (
     <>
       <Helmet>
-        <title> Dreams Boats Whatsapp Bot </title>
+        <title> Joodah Dashboard </title>
       </Helmet>
 
       <AppView />

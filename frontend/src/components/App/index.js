@@ -14,6 +14,7 @@ import { createUser, setResultData as setResultDataRedux } from "./../../store/u
 
 const App = () => {
   const { i18n, t } = useTranslation();
+  const currentLang = i18n?.language
 
   useEffect(() => {
     document.body.dir = i18n.language === "ar" ? "rtl" : "ltr";

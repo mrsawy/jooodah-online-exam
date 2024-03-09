@@ -72,9 +72,9 @@ body[dir="rtl"] *:not(i) {
   color: #c2c1c1;
 }
 
-.p-dropdown-filter-container svg{
+/* .p-dropdown-filter-container svg{
   display: none;
-}
+} */
 
 
 .dir-ltr{

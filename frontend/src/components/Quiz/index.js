@@ -6,7 +6,7 @@ import {
   Segment,
   Item,
   Divider,
-  Button,
+  // Button,
   Icon,
   Message,
   Menu,
@@ -15,7 +15,17 @@ import {
 import he from "he";
 import { useTranslation } from "react-i18next";
 import { Button as PrimeButton } from "primereact/button";
+import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
 import Swal from "sweetalert2";
+
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
+import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOutlined";
+import ArrowCircleLeftOutlined from "@mui/icons-material/ArrowCircleLeftOutlined";
+import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+
+import Button from "@mui/material/Button";
 
 import Countdown from "../Countdown";
 import { getLetter } from "../../utils";
@@ -70,7 +80,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
           point,
         },
       ];
-      setUserSlectedAns(qData.map((d) => ({ name:d?.user_answer  })));
+      setUserSlectedAns(qData.map((d) => ({ name: d?.user_answer })));
 
       return qData;
     });
@@ -78,10 +88,9 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
   };
 
   const handleNext = () => {
-    
-    if (questionIndex === data.length - 1) {
+    if (questionIndex === data?.length - 1) {
       return endQuiz({
-        totalQuestions: data.length,
+        totalQuestions: data?.length,
         correctAnswers,
         timeTaken,
         questionsAndAnswers,
@@ -97,7 +106,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
   const timeOver = (timeTaken) => {
     return endQuiz(
       {
-        totalQuestions: data.length,
+        totalQuestions: data?.length,
         correctAnswers,
         timeTaken,
         questionsAndAnswers,
@@ -140,14 +149,12 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                   </div>
 
                   {numberOfPausesLeft > 0 && !examIsPaused && (
-                    <div className="m-auto  mb-3 lg:mb-0 flex flex-col">
+                    <div className="m-auto  mb-3 lg:mb-0 flex flex-col justify-center items-center gap-4">
                       <label className="text-lg">
                         {t(`pauses_left`)}: {numberOfPausesLeft}
                       </label>
+
                       <Button
-                        className="p-3 "
-                        icon
-                        labelPosition="left"
                         onClick={() => {
                           dispatch(pauseExam());
                           if (typeof pauseSeconds == `number`) {
@@ -156,13 +163,19 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                             }, pauseSeconds * 1000);
                           }
                         }}
+                        sx={{ backgroundColor: `rgb(203 215 225 / var(--tw-bg-opacity))` }}
+                        // className=" bg-slate-300 hover:bg-slate-500"
+                        variant="outlined"
+                        // startIcon={<PauseCircleOutlineRoundedIcon />}
+                        endIcon={currentLang == `en` ? null : <PauseCircleOutlineRoundedIcon />}
+                        startIcon={currentLang == `ar` ? null : <PauseCircleOutlineRoundedIcon />}
+                        className={` float-right ${currentLang == `ar` && "flex gap-3"} mx-3`}
                       >
-                        <Icon name="pause" />
                         {t(`Pause`)}
                       </Button>
                     </div>
                   )}
-                  <div className="m-auto flex gap-6 items-center justify-center flex-wrap ">
+                  <div className="m-auto flex gap-6 items-end justify-center flex-wrap ">
                     <Countdown
                       countdownTime={countdownTime}
                       timeOver={timeOver}
@@ -223,53 +236,70 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                   </Menu>
                 </Item.Meta>
                 <Divider />
-                <Item.Extra>
-                  {!(questionIndex + 1 == data.length) ? (
-                    <div>
+                <Item.Extra
+                  className={
+                    "flex flex-nowrap justify-between " + currentLang == `ar`
+                      ? `flex flex-row flex-nowrap justify-between`
+                      : `flex flex-row flex-nowrap justify-between`
+                  }
+                >
+                  {!(questionIndex + 1 == data?.length) ? (
+                    <div
+                      className={"ml-auto flex  gap-3 " + currentLang == `ar` && "justify-content-start"}
+                    >
                       <Button
-                        primary
-                        content={t("Next")}
                         onClick={handleNext}
-                        floated="right"
-                        size={screenWidth < 600 ? "medium" : `big`}
-                        icon="right chevron"
-                        labelPosition="right"
-                      />
+                        variant="contained"
+                        endIcon={currentLang == `ar` ? null : <ArrowCircleRightOutlinedIcon />}
+                        startIcon={currentLang == `en` ? null : <ArrowCircleRightOutlinedIcon />}
+                        className={` float-right ${currentLang == `ar` && "flex gap-3"} mx-3`}
+                      >
+                        {t("Next")}
+                      </Button>
                       <Button
-                        primary
-                        content={t("Skip")}
                         onClick={handleNext}
-                        floated="right"
-                        size={screenWidth < 600 ? "medium" : `big`}
-                        icon="right chevron"
-                        labelPosition="right"
-                      />
+                        variant="contained"
+                        endIcon={currentLang == `ar` ? null : <ArrowCircleRightOutlinedIcon />}
+                        startIcon={currentLang == `en` ? null : <ArrowCircleRightOutlinedIcon />}
+                        className={` float-right ${currentLang == `ar` && "flex gap-3"}`}
+                        >
+                        {t("Skip")}
+                      </Button>
                     </div>
                   ) : (
-                    <div>
+                    <div
+                      className={"ml-auto flex  gap-3 " + currentLang == `ar` && "justify-content-start"}
+                    >
                       <Button
-                        primary
-                        content={t("Finish")}
                         onClick={handleNext}
-                        floated="right"
-                        size={screenWidth < 600 ? "medium" : `big`}
-                        icon="right chevron"
-                        labelPosition="right"
-                      />
+                        variant="contained"
+                        endIcon={currentLang == `ar` ? null : <CheckCircleOutlineRoundedIcon />}
+                        startIcon={currentLang == `en` ? null : <CheckCircleOutlineRoundedIcon />}
+                        className={currentLang == `ar` && "flex gap-3"}
+                      >
+                        {t("Finish")}
+                      </Button>
                     </div>
                   )}
                   {questionIndex > 0 && (
-                    <Button
-                      primary
-                      content={t("Previous")}
-                      onClick={handlePrev}
-                      floated="left"
-                      size={screenWidth < 600 ? "medium" : `big`}
-                      icon="left chevron"
-                      labelPosition="left"
-                      disable={questionIndex}
-                    />
+                    <div
+                      className={"flex " + currentLang == `ar` ? "justify-start" : "justify-end"}
+                    >
+                      <Button
+                        onClick={handlePrev}
+                        variant="contained"
+                        // startIcon={<ArrowCircleLeftOutlined />}
+                        endIcon={currentLang == `en` ? null : <ArrowCircleLeftOutlined />}
+                        startIcon={currentLang == `ar` ? null : <ArrowCircleLeftOutlined />}
+                        className={`  float-left mr-auto ${currentLang == `ar` && "flex gap-3"}`}
+                        disable={questionIndex}
+                      >
+                        {t("Previous")}
+                      </Button>
+                    </div>
                   )}
+                  {/* ArrowForwardIosOutlinedIcon */}
+                  {/* ArrowBackIosNewRoundedIcon */}
                 </Item.Extra>
               </Item.Content>
             </Item>
