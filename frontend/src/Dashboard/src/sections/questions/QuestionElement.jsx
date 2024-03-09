@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Swal from "sweetalert2";
 import { deleteQuestion } from "../../store/question/questionSlice";
 import { getLevelThunk } from "../../store/level/levelSlice";
 
@@ -9,9 +10,20 @@ export default function QuestionElement({ _id, correct_answer, wrong_answers, va
   const dispatch = useDispatch();
   const { currentQuestions, currentLevel, isLoading } = useSelector((state) => state.questions);
   const handleDelete = () => {
-    // console.log(`q id =>`, _id, `level id =>`, currentLevel?.id);
-    dispatch(deleteQuestion({ questionId: _id, levelId: currentLevel?._id }));
-    dispatch(getLevelThunk());
+    Swal.fire({
+      icon: "question",
+      title: `Are you sure ?`,
+      iconHtml: "؟",
+      confirmButtonText: "yes",
+      cancelButtonText: "no",
+      showCancelButton: true,
+      showCloseButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteQuestion({ questionId: _id, levelId: currentLevel?._id }));
+        dispatch(getLevelThunk());
+      }
+    });
   };
   return (
     <>

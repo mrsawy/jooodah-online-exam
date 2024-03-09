@@ -5,7 +5,9 @@ import Swal from "sweetalert2";
 import { setLevel, setPauseTime } from "./../../store/exam/examlSlice";
 import { setUserData } from "./../../store/user/userSlice";
 import { api_url } from "./../../utils/base_url";
-import InstructionModal from "./../InstructionModal";
+import countries from "./CountryCodeIntput/countries.json";
+
+// import InstructionModal from "./../InstructionModal";
 
 // import { Input } from 'semantic-ui-react'
 
@@ -21,15 +23,37 @@ import {
 } from "semantic-ui-react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-
+import * as yup from "yup";
 import mindImg from "../../images/logo.png";
-
 import { shuffle } from "../../utils";
-
 import formatExam from "../../utils/formatExam";
 import NumericInput from "../NumericInput";
+import CountryCodeInput from "./CountryCodeIntput/CountryCodeIntput";
 
 const Main = ({ startQuiz }) => {
+  const validationSchema = yup.object().shape({
+    name: yup
+      .string()
+
+      .required("Name is required"),
+    firstName: yup
+      .string()
+      .required("First name is required")
+      .matches(/^[A-Za-z\u0600-\u06FF]+$/, "Name can only contain letters"),
+
+    lastName: yup
+      .string()
+      .required("last Name is required")
+      .matches(/^[A-Za-z\u0600-\u06FF]+$/, "Name can only contain letters"),
+
+    phone: yup.string().required("Phone is required"),
+    email: yup.string().email("Invalid email").required("Email is required"),
+    fullPhone: yup
+      .string()
+      .required("Phone is required")
+      .min(12, "Phone must be at least 11 numbers")
+      .max(14, "Phone cannot exceed 13 number"),
+  });
   const { i18n, t } = useTranslation();
   let currLang = i18n.language;
 
@@ -37,10 +61,13 @@ const Main = ({ startQuiz }) => {
   let { levels } = useSelector((s) => s.exam);
   const [category, setCategory] = useState(null);
   const [examLang, setExamLang] = useState(null);
-  const [name, setName] = useState(null);
+  const [name, setName] = useState(``);
+  const [firstName, setFirstName] = useState(``);
+  const [lastName, setLastName] = useState(``);
   const [phone, setPhone] = useState(null);
+  const [fullPhone, setFullPhone] = useState(null);
   const [email, setEmail] = useState(null);
-
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
 
@@ -49,9 +76,17 @@ const Main = ({ startQuiz }) => {
     allFieldsSelected = true;
   }
   const fetchData = async () => {
+    console.log(fullPhone);
     try {
-      dispatch(setUserData({ name, phone, email }));
-      if (!allFieldsSelected) {
+      const valid = validationSchema.validateSync({
+        name,
+        email,
+        phone,
+        fullPhone,
+        firstName,
+        lastName,
+      });
+      if (!allFieldsSelected || !valid) {
         Swal.fire({
           icon: "error",
           title: `${t(`Error`)}!`,
@@ -61,17 +96,17 @@ const Main = ({ startQuiz }) => {
       }
       setProcessing(true);
       const response = await axios.post(`${api_url}/users/check`, { email, phone });
-      let result = response.data;
-      // console.log(result);
       if (response.status !== 200) {
         Swal.fire({
           icon: "error",
-          // title: "Error!",
           title: `${t(`Error`)}!`,
           text: t(`User with the same email or phone already exists`),
         });
         return;
       }
+
+      dispatch(setUserData({ name, phone: fullPhone, email }));
+
       const {
         questions: results,
         numberOfMinutes,
@@ -81,9 +116,7 @@ const Main = ({ startQuiz }) => {
         levelId: category,
         examLang,
       });
-      // console.log(pauseTime)
       dispatch(setPauseTime(pauseTime));
-
       results.forEach((element) => {
         element.options = shuffle([element.correct_answer, ...element.incorrect_answers]);
       });
@@ -91,7 +124,16 @@ const Main = ({ startQuiz }) => {
       setProcessing(false);
       startQuiz(results, numberOfMinutes * 60);
     } catch (e) {
-      // console.log(`ee==`, e);
+      // console.log(e?.errors);
+      if (Array.isArray(e?.errors) && e?.errors?.length > 0) {
+        Swal.fire({
+          icon: "error",
+          title: `${t(`Error`)}!`,
+          text: e?.errors?.map((err) => t(`${err}`)).join(` - `),
+        });
+        setProcessing(false);
+        return;
+      }
       Swal.fire({
         icon: "error",
         title: `${t(`Error`)}!`,
@@ -106,10 +148,9 @@ const Main = ({ startQuiz }) => {
       <Segment>
         <Item.Group divided>
           <Item>
-            <div className="flex flex-col gap-1 justify-start items-start px-2">
+            <div className="flex flex-col gap-1 justify-center items-center px-4">
               <Item.Image src={mindImg} />
             </div>
-            {/* <div>test</div> */}
             <Item.Content>
               <Item.Header>
                 <h1>{t(`The_Quiz`)}</h1>
@@ -121,27 +162,57 @@ const Main = ({ startQuiz }) => {
                 </Message>
               )}
               <Divider />
-              <p> {t(`Full_Name`)} </p>
-              <Input
-                value={name}
-                onChange={(_, { value }) => {
-                  setName(value);
-                }}
-                className="w-100"
-                placeholder={`${t("name")}...`}
-              />
+
+              <div className=" flex flex-col lg:flex-row lg:flex-nowrap gap-10">
+                <div className="w-100 lg:w-auto">
+                  <p> {t(`First Name`)} </p>
+                  <Input
+                    value={firstName}
+                    onChange={(_, { value }) => {
+                      setFirstName(value);
+                      setName(`${value} ${lastName}`);
+                    }}
+                    className="w-100 lg:w-auto"
+                    placeholder={`${t("name")}...`}
+                  />
+                </div>
+                <div className="w-100 lg:w-auto">
+                  <p> {t(`Family Name`)} </p>
+                  <Input
+                    value={lastName}
+                    onChange={(_, { value }) => {
+                      setLastName(value);
+                      setName(`${firstName} ${value}`);
+                    }}
+                    placeholder={`${t("name")}...`}
+                    className="w-100 lg:w-auto"
+                  />
+                </div>
+              </div>
               <Divider />
 
               <p>{t(`Phone_Number`)} </p>
-
-              <NumericInput
-                value={phone}
-                onChange={({ target }) => {
-                  setPhone(target?.value);
-                }}
-                className="w-100"
-                placeholder={`${t("phone")}...`}
-              />
+              <div className={`flex ${currLang == "ar" ? "flex-row-reverse" : "flex-row"}`}>
+                <CountryCodeInput
+                  selectedCountry={selectedCountry}
+                  onChange={(e) => {
+                    setSelectedCountry(e.value);
+                    console.log(e.value);
+                    setFullPhone(`${e.value[`phone-code`]} ${phone}`);
+                  }}
+                  className=" min-w-32"
+                  countries={countries}
+                />
+                <NumericInput
+                  value={phone}
+                  onChange={({ target }) => {
+                    setPhone(target?.value);
+                    setFullPhone(`${selectedCountry[`phone-code`]} ${target?.value}`);
+                  }}
+                  className="w-100 numiricPhone"
+                  placeholder={`${t("phone")}...`}
+                />
+              </div>
               <Divider />
               <p> {t(`Email_Adress`)} </p>
               <Input
@@ -170,7 +241,6 @@ const Main = ({ startQuiz }) => {
                   })}
                   value={category}
                   onChange={(_, e) => {
-                    // console.log(e);
                     setCategory(e?.value);
                     dispatch(
                       setLevel({
@@ -218,10 +288,6 @@ const Main = ({ startQuiz }) => {
       <br />
     </Container>
   );
-};
-
-Main.propTypes = {
-  startQuiz: PropTypes.func.isRequired,
 };
 
 export default Main;

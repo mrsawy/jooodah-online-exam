@@ -34,13 +34,17 @@ export const examSlice = createSlice({
   name: "exam",
   initialState,
   reducers: {
+    setExamIsPaused: (s, action) => {
+      console.log(`setExamIsPaused reucer`);
+      s.examIsPaused = action?.payload;
+    },
     pauseExam: (state, action) => {
       if (state.numberOfPausesLeft > 0) {
         state.numberOfPausesLeft = state.numberOfPausesLeft - 1;
         state.examIsPaused = true;
-        setTimeout(() => {
-          state.examIsPaused = false;
-        }, state?.pauseTime?.value * 60);
+        // setTimeout(() => {
+        //   state.examIsPaused = false;
+        // }, state?.pauseTime?.value * 60);
       }
     },
     setPauseTime: (state, action) => {
@@ -102,5 +106,6 @@ export const {
   addLevelItem,
   deleteLevelItem,
   editLevelItem,
-  pauseExam
+  pauseExam,
+  setExamIsPaused,
 } = examSlice.actions;

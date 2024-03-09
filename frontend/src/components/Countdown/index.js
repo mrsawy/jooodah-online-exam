@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Button, Popup } from "semantic-ui-react";
 import Swal from "sweetalert2";
-import { useTranslation } from "react-i18next";
 
 import { timeConverter } from "../../utils";
 
@@ -14,17 +13,14 @@ import { timeConverter } from "../../utils";
 //
 
 const Countdown = ({ countdownTime, timeOver, setTimeTaken, pause }) => {
-
-  const { i18n, t } = useTranslation();
-
   let { numberOfPausesLeft, examIsPaused } = useSelector((s) => s?.exam);
+
   const totalTime = countdownTime * 1000;
   const [timerTime, setTimerTime] = useState(totalTime);
   const { hours, minutes, seconds } = timeConverter(timerTime);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      // console.log(examIsPaused);
       if (!examIsPaused || pause) {
         const newTime = timerTime - 1000;
         if (newTime >= 0) {
@@ -34,9 +30,9 @@ const Countdown = ({ countdownTime, timeOver, setTimeTaken, pause }) => {
           if (!pause) {
             Swal.fire({
               icon: "info",
-              title: t(`Oops! Time's up.`),
-              text: t("Hope You did well ."),
-              confirmButtonText: t("OK"),
+              title: `Oops! Time's up.`,
+              text: "See how you did!",
+              confirmButtonText: "Check Results",
               timer: 5000,
               willClose: () => timeOver(totalTime - timerTime),
             });
@@ -47,21 +43,27 @@ const Countdown = ({ countdownTime, timeOver, setTimeTaken, pause }) => {
 
     return () => {
       clearInterval(timer);
-      if (setTimeTaken) {
+      if (typeof setTimeTaken == `function`) {
         setTimeTaken(totalTime - timerTime + 1000);
       }
     };
 
     // eslint-disable-next-line
-  }, [timerTime]);
+  }, [timerTime, examIsPaused]);
 
   return (
-    <Button.Group size="big" basic floated="right">
+    <Button.Group size="massive" basic floated="right" className="  dir-ltr">
       <Popup content="Hours" trigger={<Button active>{hours}</Button>} position="bottom left" />
       <Popup content="Minutes" trigger={<Button active>{minutes}</Button>} position="bottom left" />
       <Popup content="Seconds" trigger={<Button active>{seconds}</Button>} position="bottom left" />
     </Button.Group>
   );
 };
+
+// Countdown.propTypes = {
+//   countdownTime: PropTypes.number.isRequired,
+//   timeOver: PropTypes.func.isRequired,
+//   setTimeTaken: PropTypes.func.isRequired,
+// };
 
 export default Countdown;

@@ -9,9 +9,12 @@ import HttpApi from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 import "flowbite";
-import "primeicons/primeicons.css";
-import "primereact/resources/themes/saga-green/theme.css"; // Choose a theme (e.g., saga-blue)
-import "primereact/resources/primereact.min.css";
+
+import "primereact/resources/themes/lara-light-indigo/theme.css"; //theme
+import "primereact/resources/primereact.min.css"; //core css
+import "primeicons/primeicons.css"; //icons
+import PrimeReact from "primereact/api";
+
 import "./index.css";
 
 import enTranslation from "./locals/en.json";
@@ -21,6 +24,8 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import router from "./Router";
 import Spinner from "./components/Spinner";
 import { store } from "./store/store";
+
+PrimeReact.ripple = true;
 i18next
   .use(HttpApi)
   .use(LanguageDetector)
@@ -41,7 +46,6 @@ i18next
       loadPath: "/locals/{{lng}}.json",
     },
   });
-
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

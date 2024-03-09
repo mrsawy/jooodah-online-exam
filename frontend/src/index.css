@@ -63,3 +63,20 @@ body[dir="rtl"] *:not(i) {
   font-style: normal;
   font-variation-settings: "slnt" 0;
 }
+
+.numiricPhone input {
+  padding-block: 10px;
+}
+
+.p-dropdown-label.p-inputtext.p-placeholder span {
+  color: #c2c1c1;
+}
+
+.p-dropdown-filter-container svg{
+  display: none;
+}
+
+
+.dir-ltr{
+  direction: ltr !important;
+}

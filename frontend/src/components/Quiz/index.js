@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 
 import Countdown from "../Countdown";
 import { getLetter } from "../../utils";
-import { pauseExam } from "../../store/exam/examlSlice";
+import { pauseExam, setExamIsPaused } from "../../store/exam/examlSlice";
 import PauseModal from "../PauseModal";
 
 const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
@@ -30,7 +30,15 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
   let screenWidth = window.innerWidth;
 
   const dispatch = useDispatch();
-  let { numberOfPausesLeft, examIsPaused } = useSelector((s) => s?.exam);
+  let { numberOfPausesLeft, examIsPaused, pauseTime } = useSelector((s) => s?.exam);
+  // useEffect(() => {
+  //   console.log(`numberOfPausesLeft changed ==>`, numberOfPausesLeft);
+  // }, [numberOfPausesLeft]);
+  // useEffect(() => {
+  //   console.log(`examIsPaused changed ==>`, examIsPaused);
+  // }, [examIsPaused]);
+
+  let pauseSeconds = pauseTime?.value > 0 ? pauseTime?.value * 60 : 0;
 
   const [questionIndex, setQuestionIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -43,16 +51,16 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
   }, [questionIndex]);
 
   const handleItemClick = (e, ansData) => {
-    console.log(ansData);
+    console.log(e, ansData);
     let { name } = ansData;
-    setUserSlectedAns((p) => [...p.filter((ele) => ele?.name !== name), { name }]);
+    // setUserSlectedAns((p) => [...p.filter((ele) => ele?.name !== name), { name }]);
     let point = 0;
     if (name === he.decode(data[questionIndex].correct_answer)) {
       point = 1;
     }
 
     setQuestionsAndAnswers((p) => {
-      return [
+      let qData = [
         ...p?.filter((ele) => ele?._id !== he.decode(data[questionIndex]?._id)),
         {
           _id: he.decode(data[questionIndex]?._id),
@@ -62,14 +70,15 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
           point,
         },
       ];
+      setUserSlectedAns(qData.map((d) => ({ name:d?.user_answer  })));
+
+      return qData;
     });
     setCorrectAnswers(correctAnswers + point);
   };
 
   const handleNext = () => {
-    console.log(questionIndex);
-    console.log(data.length);
-    console.log(data);
+    
     if (questionIndex === data.length - 1) {
       return endQuiz({
         totalQuestions: data.length,
@@ -99,7 +108,6 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
   const uniqueOptions = {};
   const handleQuite = () => {
     Swal.fire({
-      // title: "هل تريد الاستمرار؟",
       icon: "question",
       title: t(`Are you sure you want to quite ?`),
       iconHtml: "؟",
@@ -108,7 +116,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
       showCancelButton: true,
       showCloseButton: true,
     }).then((result) => {
-      console.log(result)
+      // console.log(result);
       if (result.isConfirmed) {
         onQuite();
       }
@@ -121,7 +129,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
           <Item.Group divided>
             <Item>
               <Item.Content>
-                <Item.Extra className="text-center flex justify-between items-center flex-wrap">
+                <Item.Extra className="text-center flex justify-between items-center flex-wrap  flex-row-reverse">
                   <div className="m-auto flex justify-center items-center  mb-3 lg:mb-0">
                     <Header as="h3" block floated="left" className="m-auto">
                       <Icon name="info circle" />
@@ -142,6 +150,11 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                         labelPosition="left"
                         onClick={() => {
                           dispatch(pauseExam());
+                          if (typeof pauseSeconds == `number`) {
+                            setTimeout(() => {
+                              dispatch(setExamIsPaused(false));
+                            }, pauseSeconds * 1000);
+                          }
                         }}
                       >
                         <Icon name="pause" />
@@ -160,7 +173,14 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                       {t(`Quite`)}
                     </button>
 
-                    {examIsPaused && <PauseModal />}
+                    {examIsPaused && (
+                      <PauseModal
+                        timeOver={() => {
+                          // console.log(`pause over`);
+                        }}
+                        visible={examIsPaused}
+                      />
+                    )}
                   </div>
                 </Item.Extra>
                 <br />

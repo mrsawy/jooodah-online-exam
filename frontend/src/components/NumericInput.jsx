@@ -1,6 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import {
+  Input,
+  Container,
+  Segment,
+  Item,
+  Dropdown,
+  Divider,
+  Button,
+  Message,
+} from "semantic-ui-react";
+
 import TextField from "@mui/material/TextField";
 
 function NumericInput({ value, label, onChange, placeholder, className }) {
@@ -9,7 +20,7 @@ function NumericInput({ value, label, onChange, placeholder, className }) {
     event.target.value = value;
   };
   return (
-    <TextField
+    <Input
       className={className}
       value={value}
       placeholder={placeholder ? placeholder : ``}
