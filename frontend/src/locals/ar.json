@@ -70,5 +70,7 @@
   "Family Name": "إسم العائلة",
   "First name is required": "الإسم الأول مطلوب",
   "last Name is required": "إسم العائلة مطلوب",
-  "Name can only contain letters":"الإسم يجب أن لا يحتوي على رموز او مسافات"
+  "Name can only contain letters":"الإسم يجب أن لا يحتوي على رموز او مسافات",
+  "fetching that content for you.":"يتم التحميل",
+  "Just one second":"إنتظر قليلا"
 }

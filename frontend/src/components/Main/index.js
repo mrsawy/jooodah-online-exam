@@ -183,7 +183,7 @@ const Main = ({ startQuiz }) => {
                       setName(`${value} ${lastName}`);
                     }}
                     className="w-100 lg:w-auto"
-                    placeholder={`${t("name")}...`}
+                    placeholder={`${t("First Name")}...`}
                   />
                 </div>
                 <div className="w-100 lg:w-auto">
@@ -194,7 +194,7 @@ const Main = ({ startQuiz }) => {
                       setLastName(value);
                       setName(`${firstName} ${value}`);
                     }}
-                    placeholder={`${t("name")}...`}
+                    placeholder={`${t("Family Name")}...`}
                     className="w-100 lg:w-auto"
                   />
                 </div>
