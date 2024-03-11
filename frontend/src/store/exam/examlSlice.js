@@ -35,7 +35,7 @@ export const examSlice = createSlice({
   initialState,
   reducers: {
     setExamIsPaused: (s, action) => {
-      console.log(`setExamIsPaused reucer`);
+      // console.log(`setExamIsPaused reucer`);
       s.examIsPaused = action?.payload;
     },
     pauseExam: (state, action) => {
