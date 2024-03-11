@@ -131,6 +131,11 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
       }
     });
   };
+
+const [pauseTimerVis,setPauseTimerVis]= useState(false)
+  // const ViewPauseTimer =()=>{
+
+  // }
   return (
     <Item.Header>
       <Container>
@@ -148,14 +153,21 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                     </Header>
                   </div>
 
-                  {numberOfPausesLeft > 0 && !examIsPaused && (
-                    <div className="m-auto  mb-3 lg:mb-0 flex flex-col justify-center items-center gap-4">
-                      <label className="text-lg">
-                        {t(`pauses_left`)}: {numberOfPausesLeft}
-                      </label>
-
+                  <div className="m-auto  mb-3 lg:mb-0 flex flex-col justify-center items-center gap-4">
+                    <label className="text-lg">
+                      {t(`pauses_left`)}: {numberOfPausesLeft}
+                    </label>
+                    {numberOfPausesLeft > 0 && (
                       <Button
                         onClick={() => {
+                          if (examIsPaused) {
+                            Swal.fire({
+                              icon: "error",
+                              title: `${t(`Error`)}!`,
+                              text: t("Exam Is Paused"),
+                            });
+                            return;
+                          }
                           dispatch(pauseExam());
                           if (typeof pauseSeconds == `number`) {
                             setTimeout(() => {
@@ -173,8 +185,8 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                       >
                         {t(`Pause`)}
                       </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                   <div className="m-auto flex gap-6 items-end justify-center flex-wrap ">
                     <Countdown
                       countdownTime={countdownTime}
@@ -245,7 +257,9 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                 >
                   {!(questionIndex + 1 == data?.length) ? (
                     <div
-                      className={"ml-auto flex  gap-3 " + currentLang == `ar` && "justify-content-start"}
+                      className={
+                        "ml-auto flex  gap-3 " + currentLang == `ar` && "justify-content-start"
+                      }
                     >
                       <Button
                         onClick={handleNext}
@@ -262,13 +276,15 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                         endIcon={currentLang == `ar` ? null : <ArrowCircleRightOutlinedIcon />}
                         startIcon={currentLang == `en` ? null : <ArrowCircleRightOutlinedIcon />}
                         className={` float-right ${currentLang == `ar` && "flex gap-3"}`}
-                        >
+                      >
                         {t("Skip")}
                       </Button>
                     </div>
                   ) : (
                     <div
-                      className={"ml-auto flex  gap-3 " + currentLang == `ar` && "justify-content-start"}
+                      className={
+                        "ml-auto flex  gap-3 " + currentLang == `ar` && "justify-content-start"
+                      }
                     >
                       <Button
                         onClick={handleNext}

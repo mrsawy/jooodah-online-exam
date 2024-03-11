@@ -72,5 +72,7 @@
   "last Name is required": "إسم العائلة مطلوب",
   "Name can only contain letters":"الإسم يجب أن لا يحتوي على رموز او مسافات",
   "fetching that content for you.":"يتم التحميل",
-  "Just one second":"إنتظر قليلا"
+  "Just one second":"إنتظر قليلا",
+  "Cant Make That Action":"لا يمكن التنفيذ" , 
+  "Exam Is Paused":"الإختبار متوقف بالفعل"
 }

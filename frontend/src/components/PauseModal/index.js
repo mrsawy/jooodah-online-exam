@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import Countdown from "../Countdown";
 
 function PauseModal({ className, visible, timeOver }) {
-  const [vis, setVisible] = useState(true);
+  const [vis, setVisible] = useState(visible);
   const { i18n, t } = useTranslation();
   const { pauseTime, examIsPaused } = useSelector((s) => s.exam);
   let pauseValue = +pauseTime?.value * 60;
@@ -27,8 +27,7 @@ function PauseModal({ className, visible, timeOver }) {
         onHide={() => setVisible(false)}
         className="  w-full md:w-3/5 instructionModalWidth "
       >
-        {/* <div dangerouslySetInnerHTML={{ __html: content }} /> */}
-        {/* {content} */}
+
         <div className="flex justify-center items-center">
           <Countdown timeOver={timeOver} pause={true} countdownTime={pauseValue} />
         </div>
