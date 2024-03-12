@@ -62,8 +62,8 @@ const Main = ({ startQuiz }) => {
     fullPhone: yup
       .string()
       .required("Phone is required")
-      // .min(12, "Phone must be at least 11 numbers")
-      // .max(14, "Phone cannot exceed 13 number"),
+      .min(12, "Phone must be at least 11 numbers")
+      .max(14, "Phone cannot exceed 13 number"),
   });
   const { i18n, t } = useTranslation();
   let currLang = i18n.language;
@@ -105,15 +105,15 @@ const Main = ({ startQuiz }) => {
         return;
       }
       setProcessing(true);
-      // const response = await axios.post(`${api_url}/users/check`, { email, phone });
-      // if (response.status !== 200) {
-      //   Swal.fire({
-      //     icon: "error",
-      //     title: `${t(`Error`)}!`,
-      //     text: t(`User with the same email or phone already exists`),
-      //   });
-      //   return;
-      // }
+      const response = await axios.post(`${api_url}/users/check`, { email, phone });
+      if (response.status !== 200) {
+        Swal.fire({
+          icon: "error",
+          title: `${t(`Error`)}!`,
+          text: t(`User with the same email or phone already exists`),
+        });
+        return;
+      }
 
       dispatch(setUserData({ name, phone: fullPhone, email }));
 

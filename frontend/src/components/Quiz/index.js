@@ -89,14 +89,14 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
   const handleNext = () => {
     let newIndex = questionIndex + 1;
     // console.log(newIndex, userSlectedAns, currentQuestion);
-    // if (!userSlectedAns.map((e) => e.id).includes(currQState._id)) {
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: `${t(`Error`)}!`,
-    //     text: t(`You Need To Choose An Answer First`),
-    //   });
-    //   return;
-    // }
+    if (!userSlectedAns.map((e) => e.id).includes(currQState._id)) {
+      Swal.fire({
+        icon: "error",
+        title: `${t(`Error`)}!`,
+        text: t(`You Need To Choose An Answer First`),
+      });
+      return;
+    }
 
     if (questionIndex === data?.length - 1) {
       return endQuiz({
