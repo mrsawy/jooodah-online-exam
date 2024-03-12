@@ -59,7 +59,7 @@ body[dir="rtl"] input {
 body[dir="rtl"] *:not(i) {
   font-family: "Cairo", sans-serif !important;
   font-optical-sizing: auto;
-  font-weight: 600 ;
+  font-weight: 600;
   font-style: normal;
   font-variation-settings: "slnt" 0;
 }
@@ -76,7 +76,14 @@ body[dir="rtl"] *:not(i) {
   display: none;
 } */
 
-
-.dir-ltr{
+.dir-ltr {
   direction: ltr !important;
+}
+
+.dir-rtl {
+  direction: rtl !important;
+}
+
+.rtl {
+  direction: rtl !important;
 }

@@ -86,7 +86,6 @@ const Main = ({ startQuiz }) => {
     allFieldsSelected = true;
   }
   const fetchData = async () => {
-    console.log(fullPhone);
     try {
       const valid = validationSchema.validateSync({
         name,
@@ -134,7 +133,6 @@ const Main = ({ startQuiz }) => {
       setProcessing(false);
       startQuiz(results, numberOfMinutes * 60);
     } catch (e) {
-      // console.log(e?.errors);
       if (Array.isArray(e?.errors) && e?.errors?.length > 0) {
         Swal.fire({
           icon: "error",
@@ -197,7 +195,6 @@ const Main = ({ startQuiz }) => {
                       setName(`${firstName} ${value}`);
                     }}
                     name="lname"
-
                     placeholder={`${t("Family Name")}...`}
                     className="w-100 lg:w-auto"
                   />
@@ -211,7 +208,6 @@ const Main = ({ startQuiz }) => {
                   selectedCountry={selectedCountry}
                   onChange={(e) => {
                     setSelectedCountry(e.value);
-                    console.log(e.value);
                     setFullPhone(`${e.value[`phone-code`]} ${phone}`);
                   }}
                   className=" min-w-32"

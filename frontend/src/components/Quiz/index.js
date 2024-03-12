@@ -41,12 +41,6 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
 
   const dispatch = useDispatch();
   let { numberOfPausesLeft, examIsPaused, pauseTime } = useSelector((s) => s?.exam);
-  // useEffect(() => {
-  //   console.log(`numberOfPausesLeft changed ==>`, numberOfPausesLeft);
-  // }, [numberOfPausesLeft]);
-  // useEffect(() => {
-  //   console.log(`examIsPaused changed ==>`, examIsPaused);
-  // }, [examIsPaused]);
 
   let pauseSeconds = pauseTime?.value > 0 ? pauseTime?.value * 60 : 0;
 
@@ -61,7 +55,6 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
   }, [questionIndex]);
 
   const handleItemClick = (e, ansData) => {
-    console.log(e, ansData);
     let { name } = ansData;
     // setUserSlectedAns((p) => [...p.filter((ele) => ele?.name !== name), { name }]);
     let point = 0;
@@ -125,14 +118,13 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
       showCancelButton: true,
       showCloseButton: true,
     }).then((result) => {
-      // console.log(result);
       if (result.isConfirmed) {
         onQuite();
       }
     });
   };
 
-const [pauseTimerVis,setPauseTimerVis]= useState(false)
+  const [pauseTimerVis, setPauseTimerVis] = useState(false);
   // const ViewPauseTimer =()=>{
 
   // }
@@ -198,14 +190,9 @@ const [pauseTimerVis,setPauseTimerVis]= useState(false)
                       {t(`Quite`)}
                     </button>
 
-                    {examIsPaused && (
-                      <PauseModal
-                        timeOver={() => {
-                          // console.log(`pause over`);
-                        }}
-                        visible={examIsPaused}
-                      />
-                    )}
+                    {/* {examIsPaused &&  */}
+                    <PauseModal  />
+                    {/* } */}
                   </div>
                 </Item.Extra>
                 <br />
@@ -251,8 +238,8 @@ const [pauseTimerVis,setPauseTimerVis]= useState(false)
                 <Item.Extra
                   className={
                     "flex flex-nowrap justify-between " + currentLang == `ar`
-                      ? `flex flex-row flex-nowrap justify-between`
-                      : `flex flex-row flex-nowrap justify-between`
+                      ? `flex flex-row flex-nowrap justify-between dir-rtl rtl`
+                      : `flex flex-row flex-nowrap justify-between dir-rtl rtl`
                   }
                 >
                   {!(questionIndex + 1 == data?.length) ? (

@@ -1,32 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Dialog } from "primereact/dialog";
-import Button from "@mui/material/Button";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
 import Countdown from "../Countdown";
 import { setExamIsPaused } from "../../store/exam/examlSlice";
 
-function PauseModal({ className, visible, timeOver }) {
-  const [vis, setVisible] = useState(visible);
+function PauseModal({ className }) {
   const { i18n, t } = useTranslation();
-  const { pauseTime, examIsPaused } = useSelector((s) => s.exam);
+
+  const { pauseTime, examIsPaused, pauseCountDown } = useSelector((s) => s.exam);
+
+  const [vis, setVisible] = useState();
+
+  useEffect(() => {
+    if (examIsPaused) {
+      setVisible(examIsPaused);
+    }
+  }, [examIsPaused, pauseCountDown]);
+
+
   let pauseValue = +pauseTime?.value * 60;
-  console.log(`pauseValue`, pauseValue);
-  setTimeout(() => {
+
+  const timeOver = () => {
     setVisible(false);
-  }, +pauseValue * 1000);
-  // console.log(pauseValue);
+  };
 
   const dispatch = useDispatch();
   return (
     <div className={"card flex justify-content-center mx-auto  " + className}>
       <Dialog
-        // footer={<Footer />}
         maximizable={true}
         header={t("Pause timer")}
         visible={vis}
-        //   style={{ width: "50vw" }}
         onHide={() => {
           dispatch(setExamIsPaused(false));
           setVisible(false);

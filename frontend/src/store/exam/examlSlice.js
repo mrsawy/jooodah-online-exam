@@ -8,6 +8,7 @@ import { getExamDataService } from "./examService";
 const initialState = {
   levels: [],
   answers: [],
+  pauseCountDown: null,
   currentQuestions: null,
   pauseTime: { value: null, numberOfPauses: null },
   numberOfPausesLeft: 0,
@@ -35,16 +36,16 @@ export const examSlice = createSlice({
   initialState,
   reducers: {
     setExamIsPaused: (s, action) => {
-      // console.log(`setExamIsPaused reucer`);
       s.examIsPaused = action?.payload;
+    },
+
+    setPauseCountDown: (state, action) => {
+      state.pauseCountDown = action?.payload;
     },
     pauseExam: (state, action) => {
       if (state.numberOfPausesLeft > 0) {
         state.numberOfPausesLeft = state.numberOfPausesLeft - 1;
         state.examIsPaused = true;
-        // setTimeout(() => {
-        //   state.examIsPaused = false;
-        // }, state?.pauseTime?.value * 60);
       }
     },
     setPauseTime: (state, action) => {
@@ -101,6 +102,7 @@ export const examSlice = createSlice({
 export default examSlice.reducer;
 export const {
   setPauseTime,
+  setPauseCountDown,
   setLevelIsSet,
   setLevel,
   addLevelItem,

@@ -5,6 +5,7 @@ import { Button, Popup } from "semantic-ui-react";
 import Swal from "sweetalert2";
 
 import { timeConverter } from "../../utils";
+import { setPauseCountDown } from "../../store/exam/examlSlice";
 
 //
 
@@ -18,6 +19,14 @@ const Countdown = ({ countdownTime, timeOver, setTimeTaken, pause }) => {
   const totalTime = countdownTime * 1000;
   const [timerTime, setTimerTime] = useState(totalTime);
   const { hours, minutes, seconds } = timeConverter(timerTime);
+
+  useEffect(() => {
+    const { hours: h, minutes: m, seconds: s } = timeConverter(timerTime);
+    setPauseCountDown({ hours: h, minutes: m, seconds: s });
+    if (+h == 0 && +m == 0 && +s == 0) {
+      timeOver();
+    }
+  }, [timerTime]);
 
   useEffect(() => {
     const timer = setInterval(() => {
