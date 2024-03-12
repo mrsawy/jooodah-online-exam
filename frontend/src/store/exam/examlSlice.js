@@ -10,6 +10,7 @@ const initialState = {
   answers: [],
   pauseCountDown: null,
   currentQuestions: null,
+  currentQuestion: null,
   pauseTime: { value: null, numberOfPauses: null },
   numberOfPausesLeft: 0,
   examIsPaused: false,
@@ -38,7 +39,9 @@ export const examSlice = createSlice({
     setExamIsPaused: (s, action) => {
       s.examIsPaused = action?.payload;
     },
-
+    setCurrentQuestion: (s, action) => {
+      s.currentQuestion = action?.payload;
+    },
     setPauseCountDown: (state, action) => {
       state.pauseCountDown = action?.payload;
     },
@@ -110,4 +113,6 @@ export const {
   editLevelItem,
   pauseExam,
   setExamIsPaused,
+  setCurrentQuestion ,
+  setCurrentQuestions
 } = examSlice.actions;

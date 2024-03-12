@@ -1,6 +1,6 @@
 const getLetter = (number, currentL) => {
   let letter;
-  console.log(currentL)
+  // console.log(currentL)
   if (currentL && typeof currentL?.toLowerCase == `function` && currentL?.toLowerCase()) {
     var currentLang = currentL?.toLowerCase();
   } else {

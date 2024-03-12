@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import SendIcon from "@mui/icons-material/Send";
 
 import Swal from "sweetalert2";
-import { setLevel, setPauseTime } from "./../../store/exam/examlSlice";
+import { setCurrentQuestion, setLevel, setPauseTime } from "./../../store/exam/examlSlice";
 import { setUserData } from "./../../store/user/userSlice";
 import { api_url } from "./../../utils/base_url";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
@@ -39,6 +39,7 @@ import { shuffle } from "../../utils";
 import formatExam from "../../utils/formatExam";
 import NumericInput from "../NumericInput";
 import CountryCodeInput from "./CountryCodeIntput/CountryCodeIntput";
+import {setCurrentQuestions} from "./../../store/exam/examlSlice";
 
 const Main = ({ startQuiz }) => {
   const validationSchema = yup.object().shape({
@@ -61,14 +62,14 @@ const Main = ({ startQuiz }) => {
     fullPhone: yup
       .string()
       .required("Phone is required")
-      .min(12, "Phone must be at least 11 numbers")
-      .max(14, "Phone cannot exceed 13 number"),
+      // .min(12, "Phone must be at least 11 numbers")
+      // .max(14, "Phone cannot exceed 13 number"),
   });
   const { i18n, t } = useTranslation();
   let currLang = i18n.language;
 
   const dispatch = useDispatch();
-  let { levels } = useSelector((s) => s.exam);
+  let { levels  } = useSelector((s) => s.exam);
   const [category, setCategory] = useState(null);
   const [examLang, setExamLang] = useState(null);
   const [name, setName] = useState(``);
@@ -104,15 +105,15 @@ const Main = ({ startQuiz }) => {
         return;
       }
       setProcessing(true);
-      const response = await axios.post(`${api_url}/users/check`, { email, phone });
-      if (response.status !== 200) {
-        Swal.fire({
-          icon: "error",
-          title: `${t(`Error`)}!`,
-          text: t(`User with the same email or phone already exists`),
-        });
-        return;
-      }
+      // const response = await axios.post(`${api_url}/users/check`, { email, phone });
+      // if (response.status !== 200) {
+      //   Swal.fire({
+      //     icon: "error",
+      //     title: `${t(`Error`)}!`,
+      //     text: t(`User with the same email or phone already exists`),
+      //   });
+      //   return;
+      // }
 
       dispatch(setUserData({ name, phone: fullPhone, email }));
 
@@ -131,6 +132,8 @@ const Main = ({ startQuiz }) => {
       });
 
       setProcessing(false);
+      // console.log(`main , results`,results)
+      dispatch(setCurrentQuestions(results))
       startQuiz(results, numberOfMinutes * 60);
     } catch (e) {
       if (Array.isArray(e?.errors) && e?.errors?.length > 0) {

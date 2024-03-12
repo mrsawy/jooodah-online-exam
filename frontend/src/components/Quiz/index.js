@@ -1,17 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
-import {
-  Container,
-  Segment,
-  Item,
-  Divider,
-  // Button,
-  Icon,
-  Message,
-  Menu,
-  Header,
-} from "semantic-ui-react";
+import { Container, Segment, Item, Divider, Icon, Message, Menu, Header } from "semantic-ui-react";
 import he from "he";
 import { useTranslation } from "react-i18next";
 import { Button as PrimeButton } from "primereact/button";
@@ -29,18 +19,34 @@ import Button from "@mui/material/Button";
 
 import Countdown from "../Countdown";
 import { getLetter } from "../../utils";
-import { pauseExam, setExamIsPaused } from "../../store/exam/examlSlice";
+import { pauseExam, setExamIsPaused, setCurrentQuestion } from "../../store/exam/examlSlice";
 import PauseModal from "../PauseModal";
 
 const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
+  const [currQState, setCurrQState] = useState(null);
+
+  let { numberOfPausesLeft, examIsPaused, pauseTime, currentQuestions, currentQuestion } =
+    useSelector((s) => s?.exam);
+  useEffect(() => {
+    // console.log(currentQuestions);
+    if (currentQuestions) {
+      // dispatch(setCurrentQuestion(currentQuestions[0]));
+      setCurrQState(currentQuestions[0]);
+    }
+  }, [currentQuestions]);
+
+  // useEffect(() => {
+  //   console.log(`currQState --->`, currQState, `--`, currentQuestions);
+  // }, [currQState]);
+
+  // _____________
   const { i18n, t } = useTranslation();
 
   let currentLang = i18n.language;
 
-  let screenWidth = window.innerWidth;
+  // let screenWidth = window.innerWidth;
 
   const dispatch = useDispatch();
-  let { numberOfPausesLeft, examIsPaused, pauseTime } = useSelector((s) => s?.exam);
 
   let pauseSeconds = pauseTime?.value > 0 ? pauseTime?.value * 60 : 0;
 
@@ -56,13 +62,12 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
 
   const handleItemClick = (e, ansData) => {
     let { name } = ansData;
-    // setUserSlectedAns((p) => [...p.filter((ele) => ele?.name !== name), { name }]);
     let point = 0;
     if (name === he.decode(data[questionIndex].correct_answer)) {
       point = 1;
     }
-
     setQuestionsAndAnswers((p) => {
+      // let id =  he.decode(data[questionIndex]?._id);
       let qData = [
         ...p?.filter((ele) => ele?._id !== he.decode(data[questionIndex]?._id)),
         {
@@ -73,27 +78,56 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
           point,
         },
       ];
-      setUserSlectedAns(qData.map((d) => ({ name: d?.user_answer })));
-
+      setUserSlectedAns(
+        qData.map((d) => ({ name: d?.user_answer, id: d?._id, _id: d?._id, question: d?.question }))
+      );
       return qData;
     });
     setCorrectAnswers(correctAnswers + point);
   };
 
   const handleNext = () => {
+    let newIndex = questionIndex + 1;
+    // console.log(newIndex, userSlectedAns, currentQuestion);
+    // if (!userSlectedAns.map((e) => e.id).includes(currQState._id)) {
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: `${t(`Error`)}!`,
+    //     text: t(`You Need To Choose An Answer First`),
+    //   });
+    //   return;
+    // }
+
     if (questionIndex === data?.length - 1) {
       return endQuiz({
         totalQuestions: data?.length,
         correctAnswers,
         timeTaken,
-        questionsAndAnswers,
+        questionsAndAnswers: questionsAndAnswers.filter((e) => e),
       });
     }
-    setQuestionIndex(questionIndex + 1);
+    setCurrentQuestion(currentQuestions[newIndex]);
+    setCurrQState(currentQuestions[newIndex]);
+    setQuestionIndex(newIndex);
+  };
+
+  const handleSkip = (e) => {
+    let newIndex = questionIndex + 1;
+
+    setQuestionsAndAnswers((p) => p.filter((ele, i) => ele?._id != currQState?._id));
+    setUserSlectedAns((p) => p.filter((ele, i) => ele?._id != currQState?._id));
+
+    setCurrentQuestion(currentQuestions[newIndex]);
+    setQuestionIndex(newIndex);
+    setCurrQState(currentQuestions[newIndex]);
   };
   const handlePrev = () => {
+    let newIndex = questionIndex - 1;
+
     if (questionIndex > 0) {
-      setQuestionIndex(questionIndex - 1);
+      setCurrentQuestion(currentQuestions[newIndex]);
+      setQuestionIndex(newIndex);
+      setCurrQState(currentQuestions[newIndex]);
     }
   };
   const timeOver = (timeTaken) => {
@@ -123,9 +157,6 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
       }
     });
   };
-
-  const [pauseTimerVis, setPauseTimerVis] = useState(false);
-  // const ViewPauseTimer =()=>{
 
   // }
   return (
@@ -168,9 +199,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                           }
                         }}
                         sx={{ backgroundColor: `rgb(203 215 225 / var(--tw-bg-opacity))` }}
-                        // className=" bg-slate-300 hover:bg-slate-500"
                         variant="outlined"
-                        // startIcon={<PauseCircleOutlineRoundedIcon />}
                         endIcon={currentLang == `en` ? null : <PauseCircleOutlineRoundedIcon />}
                         startIcon={currentLang == `ar` ? null : <PauseCircleOutlineRoundedIcon />}
                         className={` float-right ${currentLang == `ar` && "flex gap-3"} mx-3`}
@@ -185,14 +214,10 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                       timeOver={timeOver}
                       setTimeTaken={setTimeTaken}
                     />
-
                     <button onClick={handleQuite} class="ui inverted red button transition-all">
                       {t(`Quite`)}
                     </button>
-
-                    {/* {examIsPaused &&  */}
-                    <PauseModal  />
-                    {/* } */}
+                    <PauseModal />
                   </div>
                 </Item.Extra>
                 <br />
@@ -213,18 +238,27 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                           uniqueOptions[id] = true;
                           return true;
                         }
-
                         return false;
                       })
                       .map((option, i) => {
                         const letter = getLetter(i, currentLang);
                         const decodedOption = he.decode(option);
 
+                        {
+                          /* console.log(`--->loop==>`,data[questionIndex].question, currQState?.question); */
+                        }
                         return (
                           <Menu.Item
                             key={decodedOption}
                             name={decodedOption}
-                            active={userSlectedAns?.map((e) => e?.name).includes(decodedOption)}
+                            active={
+                              // userSlectedAns?.map((e) => e?.name).includes(decodedOption) &&
+                              userSlectedAns.find(
+                                (e) =>
+                                  e.question === data[questionIndex].question &&
+                                  e.name === decodedOption
+                              )
+                            }
                             onClick={handleItemClick}
                           >
                             <b style={{ marginRight: "8px" }}>{letter}</b>
@@ -253,16 +287,16 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                         variant="contained"
                         endIcon={currentLang == `ar` ? null : <ArrowCircleRightOutlinedIcon />}
                         startIcon={currentLang == `en` ? null : <ArrowCircleRightOutlinedIcon />}
-                        className={` float-right ${currentLang == `ar` && "flex gap-3"} mx-3`}
+                        className={` float-right ${currentLang == `ar` && "flex gap-3"}  gap-3 mx-3`}
                       >
                         {t("Next")}
                       </Button>
                       <Button
-                        onClick={handleNext}
+                        onClick={handleSkip}
                         variant="contained"
                         endIcon={currentLang == `ar` ? null : <ArrowCircleRightOutlinedIcon />}
                         startIcon={currentLang == `en` ? null : <ArrowCircleRightOutlinedIcon />}
-                        className={` float-right ${currentLang == `ar` && "flex gap-3"}`}
+                        className={` float-right ${currentLang == `ar` && "flex gap-3"}  gap-3`}
                       >
                         {t("Skip")}
                       </Button>
@@ -278,7 +312,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                         variant="contained"
                         endIcon={currentLang == `ar` ? null : <CheckCircleOutlineRoundedIcon />}
                         startIcon={currentLang == `en` ? null : <CheckCircleOutlineRoundedIcon />}
-                        className={currentLang == `ar` && "flex gap-3"}
+                        className={`${currentLang == `ar` && "flex gap-3"} gap-3`}
                       >
                         {t("Finish")}
                       </Button>
@@ -291,18 +325,15 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                       <Button
                         onClick={handlePrev}
                         variant="contained"
-                        // startIcon={<ArrowCircleLeftOutlined />}
                         endIcon={currentLang == `en` ? null : <ArrowCircleLeftOutlined />}
                         startIcon={currentLang == `ar` ? null : <ArrowCircleLeftOutlined />}
-                        className={`  float-left mr-auto ${currentLang == `ar` && "flex gap-3"}`}
+                        className={`  float-left mr-auto ${currentLang == `ar` && "flex gap-3"} gap-3`}
                         disable={questionIndex}
                       >
                         {t("Previous")}
                       </Button>
                     </div>
                   )}
-                  {/* ArrowForwardIosOutlinedIcon */}
-                  {/* ArrowBackIosNewRoundedIcon */}
                 </Item.Extra>
               </Item.Content>
             </Item>
