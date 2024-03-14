@@ -105,7 +105,7 @@ const Main = ({ startQuiz }) => {
         return;
       }
       setProcessing(true);
-      const response = await axios.post(`${api_url}/users/check`, { email, phone });
+      const response = await axios.post(`${api_url}/users/check`, { email, phone:fullPhone });
       if (response.status !== 200) {
         Swal.fire({
           icon: "error",
@@ -298,7 +298,7 @@ const Main = ({ startQuiz }) => {
                   onClick={fetchData}
                   disabled={processing}
                   variant="contained"
-                  // endIcon={<SendIcon />}
+                  // eIcon={<SendIcon />}
                   endIcon={currLang == `ar` ? null : <SendIcon />}
                   startIcon={currLang == `en` ? null : <SendIcon />}
                   className={currLang == `ar` && "flex gap-3"}

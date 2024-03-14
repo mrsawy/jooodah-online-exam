@@ -66,7 +66,7 @@ export default function UserPage() {
 
   const [filterName, setFilterName] = useState("");
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === "asc";

@@ -91,9 +91,9 @@ export default function UserTableRow({
       >
         <MenuItem onClick={handleCloseMenu} sx={{ color: "error.main" }}>
           <button
-          className="w-full flex items-center   leading-7"
+            className="w-full flex items-center   leading-7"
             onClick={() => {
-              console.log(`delete clicked` , id)
+              console.log(`delete clicked`, id);
               dispatch(deleteUser(id));
             }}
           >
@@ -121,7 +121,8 @@ const style = {
 };
 
 function BasicModal({ result, grade, date }) {
-  // console.log(`result==>`, result);
+  console.log(`result==>`, result);
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -146,7 +147,7 @@ function BasicModal({ result, grade, date }) {
             Grade : {grade} / 100
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Time taken : {timeFormat((result?.timeTaken / 1000).toFixed(0))}
+            Time taken : {timeFormat((result?.timeTaken / 1000).toFixed(0), result?.fullTime)}
           </Typography>
 
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
@@ -164,10 +165,16 @@ function BasicModal({ result, grade, date }) {
   );
 }
 
-function timeFormat(s) {
-  let seconds = +s;
-  if (typeof seconds !== "number" || seconds < 0) {
+function timeFormat(s, full) {
+  var seconds = +s;
+  let fullTime = +full;
+
+  if ((typeof seconds !== "number" || seconds < 0) && typeof fullTime !== "number") {
     return "Invalid input";
+  }
+  if ((typeof seconds !== "number" || seconds < 0 || isNaN(seconds)) && typeof fullTime == "number") {
+    seconds = fullTime;
+    console.log(seconds, fullTime);
   }
 
   const hours = Math.floor(seconds / 3600);

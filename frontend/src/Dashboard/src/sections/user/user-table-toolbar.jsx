@@ -26,8 +26,8 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
           phone: user?.phone,
           date: formatTimeCreatedAt(user?.createdAt),
           exam: user?.result?.levelName,
-          grade: `${(+user.result.correctAnswers * 100) / user.result.totalQuestions}/100`,
-          timeTaken: timeTakenFormat(user.result.timeTaken),
+          grade: `${((+user.result.correctAnswers * 100) / user.result.totalQuestions).toFixed(2)}/100`,
+          timeTaken: timeTakenFormat(user.result.timeTaken , user?.result?.fullTime),
           correctAnswers: user.result.correctAnswers,
           totalQuestions: user.result.totalQuestions,
         };

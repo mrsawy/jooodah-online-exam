@@ -3,6 +3,7 @@ const User = require(`./../models/User`);
 module.exports = {
   check: async (req, res) => {
     let { email, phone } = req.body;
+    console.log(phone)
     let user = await User.findOne({ $or: [{ email }, { phone }] });
     if (user) {
       return res.status(403).json({ error: "User with the same email or phone already exists" });
@@ -24,12 +25,13 @@ module.exports = {
   },
   createUser: async (req, res) => {
     let { userFormData } = req.body;
+    console.log(userFormData)
     let user = await User.create(userFormData);
 
     return res.status(200).json(user);
   },
   getAllUsers: async (req, res) => {
-    let users = await User.find();
+    let users = await User.find().sort({ createdAt: -1 }); ;
     res.json(users);
   },
   getOneUser: async (req, res) => {

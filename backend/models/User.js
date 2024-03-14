@@ -15,6 +15,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    fullTime: {
+      type: Number,
+      required: false,
+    },
     result: {
       grade: Number,
       fullGrade: Number,
@@ -24,6 +28,10 @@ const UserSchema = new mongoose.Schema(
       totalQuestions: Number,
       correctAnswers: Number,
       questionsAndAnswers: [],
+      fullTime: {
+        type: Number,
+        required: false,
+      },
     },
     allowTestAgain: {
       type: Number,

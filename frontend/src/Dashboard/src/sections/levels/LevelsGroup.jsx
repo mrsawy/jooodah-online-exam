@@ -33,7 +33,7 @@ function LevelsGroup() {
         pauseTime: null,
         level_ar: null,
         level_en: null,
-        newAdded:true
+        newAdded: true,
       })
     );
   };
@@ -98,27 +98,37 @@ function LevelsGroup() {
             className=" mb-4 px-4 py-3"
             variant="contained"
             onClick={() => {
-
-              
-              let errLevel = levels.find(
-                (item) =>
-                  !item?.name_ar ||
-                  !item?.name_en ||
-                  !item?.numberOfMinutes ||
-                  !item?.pauseTime ||
-                  !item?.level_ar ||
-                  !item?.level_en
-              );
-              if (errLevel) {
-                console.log(errLevel);
-                Swal.fire({
-                  icon: "error",
-                  title: "Error!",
-                  text: `Must fill all fields`,
-                });
-              } else {
-                dispatch(setLevelThunk(levels));
-              }
+              Swal.fire({
+                icon: "question",
+                title: `Are you sure ?`,
+                iconHtml: "؟",
+                confirmButtonText: "yes",
+                cancelButtonText: "no",
+                showCancelButton: true,
+                showCloseButton: true,
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  let errLevel = levels.find(
+                    (item) =>
+                      !item?.name_ar ||
+                      !item?.name_en ||
+                      !item?.numberOfMinutes ||
+                      !item?.pauseTime ||
+                      !item?.level_ar ||
+                      !item?.level_en
+                  );
+                  if (errLevel) {
+                    console.log(errLevel);
+                    Swal.fire({
+                      icon: "error",
+                      title: "Error!",
+                      text: `Must fill all fields`,
+                    });
+                  } else {
+                    dispatch(setLevelThunk(levels));
+                  }
+                }
+              });
             }}
             endIcon={!isLoading ? <PublishIcon /> : null}
           >

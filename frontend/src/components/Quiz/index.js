@@ -23,6 +23,7 @@ import { pauseExam, setExamIsPaused, setCurrentQuestion } from "../../store/exam
 import PauseModal from "../PauseModal";
 
 const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
+  // console.log(`countdownTime==`,countdownTime)
   const [currQState, setCurrQState] = useState(null);
 
   let { numberOfPausesLeft, examIsPaused, pauseTime, currentQuestions, currentQuestion } =
@@ -104,6 +105,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
         correctAnswers,
         timeTaken,
         questionsAndAnswers: questionsAndAnswers.filter((e) => e),
+        fullTime: countdownTime,
       });
     }
     setCurrentQuestion(currentQuestions[newIndex]);
@@ -136,6 +138,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
         totalQuestions: data?.length,
         correctAnswers,
         timeTaken,
+        fullTime: countdownTime,
         questionsAndAnswers,
       },
       { timeOver: true }
