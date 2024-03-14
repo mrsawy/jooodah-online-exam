@@ -9,6 +9,8 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
 import DownloadIcon from "@mui/icons-material/Download";
 import { useSelector } from "react-redux";
+import TextField from "@mui/material/TextField";
+
 import { formatTimeCreatedAt, timeTakenFormat } from "../../utils/format-time";
 import exportExcel from "../../utils/exportExcel";
 
@@ -27,7 +29,7 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
           date: formatTimeCreatedAt(user?.createdAt),
           exam: user?.result?.levelName,
           grade: `${((+user.result.correctAnswers * 100) / user.result.totalQuestions).toFixed(2)}/100`,
-          timeTaken: timeTakenFormat(user.result.timeTaken , user?.result?.fullTime),
+          timeTaken: timeTakenFormat(user.result.timeTaken, user?.result?.fullTime),
           correctAnswers: user.result.correctAnswers,
           totalQuestions: user.result.totalQuestions,
         };
@@ -56,11 +58,10 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
           {numSelected} selected
         </Typography>
       ) : (
-        <OutlinedInput
+        <TextField
           value={filterName}
           onChange={onFilterName}
           placeholder="Search user..."
-          startAdornment={<InputAdornment position="start"></InputAdornment>}
         />
       )}
 
