@@ -15,14 +15,18 @@ const router = createBrowserRouter([
     element: <App />,
   },
 
-  {
-    path: "dashboard",
-    element: <DashboardComponent />,
-  },
-  {
-    path: "*",
-    element: <DashboardComponent />,
-  },
+  // {
+  //   path: "dashboard",
+  //   element: <DashboardComponent />,
+  // },
+  // {
+  //   path: "/quiz/dashboard",
+  //   element: <DashboardComponent />,
+  // },
+  // {
+  //   path: "/quiz/*",
+  //   element: <DashboardComponent />,
+  // },
 ]);
 
 export default router;

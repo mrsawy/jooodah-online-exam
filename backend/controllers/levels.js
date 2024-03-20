@@ -25,7 +25,7 @@ module.exports = {
           name_ar,
           name_en,
           numberOfMinutes: +numberOfMinutes,
-          questions,
+          // questions,
           level_en,
           level_ar,
           pauseTime: { value: +pauseTime?.value, numberOfPauses: +pauseTime?.numberOfPauses },
@@ -38,7 +38,11 @@ module.exports = {
           const updatedLevel = await Level.findByIdAndUpdate(_id, newData, { new: true });
           allLevels.push(updatedLevel);
         } else {
-          const createdLevel = await Level.create({ ...newData, _id: new ObjectId(_id) });
+          const createdLevel = await Level.create({
+            ...newData,
+            questions: [],
+            _id: new ObjectId(_id),
+          });
           allLevels.push(createdLevel);
         }
       }

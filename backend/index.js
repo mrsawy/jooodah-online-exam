@@ -1,5 +1,6 @@
 const express = require("express");
 var cors = require("cors");
+var path = require("path");
 
 const mainApiRoute = require("./routes/index");
 require("dotenv").config();
@@ -19,17 +20,23 @@ app.use((req, res, next) => {
 
 app.use("/api", mainApiRoute);
 
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
+// app.get("/", (req, res) => {
+
+
+  app.use(express.static(path.join(__dirname, "front-build")));
+  app.get(`*`, (req, res) => {
+    res.sendFile(path.join(__dirname, "front-build", "index.html"));
+  });
+
+// });
 
 app.use(notFound);
 app.use(errorHandler);
 
-db.then(() => {
+// db.then(() => {
   app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
   });
-}).catch((err) => {
-  console.log(err);
-});
+// }).catch((err) => {
+  // console.log(err);
+// });

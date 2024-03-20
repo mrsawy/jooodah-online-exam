@@ -5,9 +5,12 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { api_url } from "./../utils/base_url";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function BasicDemo({ className }) {
   const { i18n, t } = useTranslation();
+
+  let currentLang = i18n.language;
 
   const [visible, setVisible] = useState(true);
   const [text, setText] = useState(``);
@@ -17,7 +20,10 @@ export default function BasicDemo({ className }) {
       const result = response.data;
       // console.log(result);
       const value = result?.find((item) => item.identifier == `instructions`)?.value;
-      if (value) {
+      const valueAr = result?.find((item) => item.identifier == `instructions-ar`)?.value;
+      if (currentLang == `ar`) {
+        setText(valueAr);
+      } else if (currentLang == `en`) {
         setText(value);
       }
     })();
@@ -31,8 +37,12 @@ export default function BasicDemo({ className }) {
     );
   };
   return (
-    <div className={"card flex justify-content-center mx-auto  " + className}>
-      <Button className="p-3 text-2xl" variant="contained" onClick={() => setVisible(true)}>
+    <div className={"card flex justify-content-center  ml-3 sm:ml-0" + className}>
+      <Button
+        className=" py-3 px-3 text-2xl whitespace-nowrap"
+        variant="contained"
+        onClick={() => setVisible(true)}
+      >
         {t("Show_Instructions")}
       </Button>
       <Dialog
@@ -44,6 +54,7 @@ export default function BasicDemo({ className }) {
         onHide={() => setVisible(false)}
         className="  w-full md:w-3/5 instructionModalWidth "
       >
+        <LanguageSwitcher className=" w-44 mx-auto mb-7" />
         <div dangerouslySetInnerHTML={{ __html: text }} />
       </Dialog>
     </div>

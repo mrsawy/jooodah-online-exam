@@ -1,5 +1,7 @@
 const formatQuestion = require("../utils/formatQuestion.js");
+const formatQuestions = require("../utils/formatQuestions.js");
 const Level = require(`./../models/level.js`);
+const { beginner } = require(`./../constans/questions`);
 
 module.exports = {
   addQuestion: async (req, res) => {
@@ -14,6 +16,25 @@ module.exports = {
       }
       let question = formatQuestion(req.body);
       existingLevel.questions.push(question);
+      existingLevel.save();
+      res.status(200).json({ questions: existingLevel?.questions });
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  setQuestions: async (req, res) => {
+    const { levelId, questionsArr } = req.body;
+    try {
+      const existingLevel = await Level.findById(levelId);
+      if (!existingLevel) {
+        throw new Error(`Wrong ID`);
+      }
+      if (!existingLevel?.questions) {
+        existingLevel.questions = [];
+      }
+      // let questions = formatQuestions(questionsArr);
+      existingLevel.questions = beginner
+      // JSON.stringify();
       existingLevel.save();
       res.status(200).json({ questions: existingLevel?.questions });
     } catch (e) {

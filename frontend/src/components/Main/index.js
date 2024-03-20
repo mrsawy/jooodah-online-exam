@@ -132,7 +132,6 @@ const Main = ({ startQuiz }) => {
       });
 
       setProcessing(false);
-      // console.log(`main , results`,results)
       dispatch(setCurrentQuestions(results))
       startQuiz(results, numberOfMinutes * 60);
     } catch (e) {
@@ -284,21 +283,11 @@ const Main = ({ startQuiz }) => {
               </Item.Meta>
               <Divider />
               <Item.Extra>
-                {/* <Button
-                  // primary
-                  // size="big"
-                  icon="pi-caret-right"
-                  severity="info"
-                  // labelPosition={currLang == `en` ? "left" : `right`}
-                  label={processing ? t("Processing") : t("Start_Now")}
-                  onClick={fetchData}
-                  disabled={processing}
-                /> */}
+          
                 <Button
                   onClick={fetchData}
                   disabled={processing}
                   variant="contained"
-                  // eIcon={<SendIcon />}
                   endIcon={currLang == `ar` ? null : <SendIcon />}
                   startIcon={currLang == `en` ? null : <SendIcon />}
                   className={currLang == `ar` && "flex gap-3"}

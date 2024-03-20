@@ -18,6 +18,8 @@ const getLetter = (number, currentL) => {
       break;
     case 3:
       letter = currentLang == `ar` ? `د.` : "D.";
+      case 4:
+        letter = currentLang == `ar` ? `ه.` : "E.";
       break;
     default:
       letter = currentLang == `ar` ? `أ.` : null;

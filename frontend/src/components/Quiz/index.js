@@ -23,29 +23,21 @@ import { pauseExam, setExamIsPaused, setCurrentQuestion } from "../../store/exam
 import PauseModal from "../PauseModal";
 
 const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
-  // console.log(`countdownTime==`,countdownTime)
   const [currQState, setCurrQState] = useState(null);
 
   let { numberOfPausesLeft, examIsPaused, pauseTime, currentQuestions, currentQuestion } =
     useSelector((s) => s?.exam);
   useEffect(() => {
-    // console.log(currentQuestions);
     if (currentQuestions) {
-      // dispatch(setCurrentQuestion(currentQuestions[0]));
       setCurrQState(currentQuestions[0]);
     }
   }, [currentQuestions]);
 
-  // useEffect(() => {
-  //   console.log(`currQState --->`, currQState, `--`, currentQuestions);
-  // }, [currQState]);
-
-  // _____________
   const { i18n, t } = useTranslation();
 
   let currentLang = i18n.language;
 
-  // let screenWidth = window.innerWidth;
+  let screenWidth = window.innerWidth;
 
   const dispatch = useDispatch();
 
@@ -156,6 +148,16 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
       showCloseButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
+        endQuiz(
+          {
+            totalQuestions: data?.length,
+            correctAnswers: 0,
+            timeTaken,
+            questionsAndAnswers: questionsAndAnswers.filter((e) => e),
+            fullTime: countdownTime,
+          },
+          { quite: true }
+        );
         onQuite();
       }
     });
@@ -211,7 +213,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                       </Button>
                     )}
                   </div>
-                  <div className="m-auto flex gap-6 items-end justify-center flex-wrap ">
+                  <div className="m-auto flex gap-6 items-end justify-center flex-wrap items-center ">
                     <Countdown
                       countdownTime={countdownTime}
                       timeOver={timeOver}
@@ -220,20 +222,22 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                     <button onClick={handleQuite} class="ui inverted red button transition-all">
                       {t(`Quite`)}
                     </button>
-                    <PauseModal />
                   </div>
+                  <PauseModal />
                 </Item.Extra>
                 <br />
                 <Item.Meta>
-                  <Message size="huge" floating>
-                    <b>{`${t(`Q`)}. ${he.decode(data[questionIndex]?.question)}`}</b>
+                  <Message size={`${screenWidth > 500 ? "huge" : "large"}`} floating>
+                    <b
+                      style={{ fontWeight: screenWidth < 500 ? 700 : 500 }}
+                    >{`${t(`Q`)}. ${he.decode(data[questionIndex]?.question)}`}</b>
                   </Message>
                   <br />
                   <Item.Description>
                     <h3>{t(`Please choose one of the following answers:`)}</h3>
                   </Item.Description>
                   <Divider />
-                  <Menu vertical fluid size="massive">
+                  <Menu vertical fluid size={`${screenWidth > 500 ? "massive" : "large"}`}>
                     {data[questionIndex].options
                       .filter((option) => {
                         const id = option;
@@ -247,21 +251,17 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                         const letter = getLetter(i, currentLang);
                         const decodedOption = he.decode(option);
 
-                        {
-                          /* console.log(`--->loop==>`,data[questionIndex].question, currQState?.question); */
-                        }
                         return (
                           <Menu.Item
                             key={decodedOption}
                             name={decodedOption}
-                            active={
-                              // userSlectedAns?.map((e) => e?.name).includes(decodedOption) &&
-                              userSlectedAns.find(
-                                (e) =>
-                                  e.question === data[questionIndex].question &&
-                                  e.name === decodedOption
-                              )
-                            }
+                            className="font-bold"
+                            style={{ fontWeight: screenWidth < 500 ? 700 : 400 }}
+                            active={userSlectedAns.find(
+                              (e) =>
+                                e.question === data[questionIndex].question &&
+                                e.name === decodedOption
+                            )}
                             onClick={handleItemClick}
                           >
                             <b style={{ marginRight: "8px" }}>{letter}</b>
@@ -280,11 +280,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                   }
                 >
                   {!(questionIndex + 1 == data?.length) ? (
-                    <div
-                      className={
-                        "ml-auto flex  gap-3 " + currentLang == `ar` && "justify-content-start"
-                      }
-                    >
+                    <div className="flex justify-center flex-wrap gap-y-5 items-end translate-x-8 sm:translate-x-0 sm:gap-0">
                       <Button
                         onClick={handleNext}
                         variant="contained"
@@ -348,10 +344,10 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
   );
 };
 
-Quiz.propTypes = {
-  data: PropTypes.array.isRequired,
-  countdownTime: PropTypes.number.isRequired,
-  endQuiz: PropTypes.func.isRequired,
-};
+// Quiz.propTypes = {
+//   data: PropTypes.array.isRequired,
+//   countdownTime: PropTypes.number.isRequired,
+//   endQuiz: PropTypes.func.isRequired,
+// };
 
 export default Quiz;

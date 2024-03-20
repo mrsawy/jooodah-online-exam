@@ -1,6 +1,11 @@
 /frontend/node_modules
+/dashboard/node_modules
 /backend/node_modules
 .env
 /backend/.env
 /backend/.git
 /frontend/.git
+/dashboard/.git
+/backend/constans/AR_data_with_answers.xlsx
+/backend/constans/EN_data_with_answers.xlsx
+backend/constans/~*.xlsx

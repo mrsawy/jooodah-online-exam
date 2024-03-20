@@ -8,6 +8,7 @@ import Loader from "../Loader";
 import Main from "../Main";
 import Quiz from "../Quiz";
 import Result from "../Result";
+import Spinner from "../Spinner";
 
 import { getExamData } from "../../store/exam/examlSlice";
 import { createUser, setResultData as setResultDataRedux } from "./../../store/user/userSlice";
@@ -32,7 +33,7 @@ const App = () => {
   const onQuite = () => {
     setIsQuite(true);
   };
-  const { currentLevel } = useSelector((s) => s?.exam);
+  const { currentLevel, isLoading: examDataIsLoading } = useSelector((s) => s?.exam);
   const { user } = useSelector((s) => s?.users);
 
   const dispatch = useDispatch();
@@ -53,7 +54,8 @@ const App = () => {
   const endQuiz = (resultData, options) => {
     if (
       resultData?.questionsAndAnswers?.length !== resultData?.totalQuestions &&
-      !options?.timeOver
+      !options?.timeOver &&
+      !options?.quite
     ) {
       Swal.fire({
         icon: "error",
@@ -78,7 +80,9 @@ const App = () => {
     }, 2000);
   };
 
-  return (
+  return examDataIsLoading ? (
+    <Spinner className=" h-screen" />
+  ) : (
     <Layout>
       {loading && <Loader {...loadingMessage} />}
       {!loading && !isQuizStarted && !isQuizCompleted && <Main startQuiz={startQuiz} />}
