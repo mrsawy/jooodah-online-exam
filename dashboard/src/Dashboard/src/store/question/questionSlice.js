@@ -6,7 +6,12 @@ import {
 } from "@reduxjs/toolkit";
 
 import { uploads_url } from "../../utils/base_url";
-import { addQuestionsService, getQuestionsService, deleteQuestionService } from "./questionService";
+import {
+  addQuestionsService,
+  getQuestionsService,
+  deleteQuestionService,
+  editQuestionsService,
+} from "./questionService";
 // import brandService from "./brandService";
 
 const initialState = {
@@ -31,6 +36,14 @@ export const getQuestions = createAsyncThunk(
     }
   }
 );
+export const editQuestion = createAsyncThunk("questions/editQuestions", async (args, thunkAPI) => {
+  try {
+    const questions = await editQuestionsService(args);
+    return questions;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
 export const addQuestions = createAsyncThunk("questions/addQuestions", async (args, thunkAPI) => {
   try {
     const questions = await addQuestionsService(args);
@@ -90,6 +103,26 @@ export const questionsSlice = createSlice({
         state.questionsIsSet = false;
         state.message = action.error;
       })
+      .addCase(editQuestion.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+        state.questionsIsSet = false;
+      })
+      .addCase(editQuestion.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.currentQuestions = action.payload?.questions;
+        state.questionsIsSet = true;
+      })
+      .addCase(editQuestion.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.questionsIsSet = false;
+        state.message = action.error;
+      })
       .addCase(getQuestions.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -128,4 +161,4 @@ export const questionsSlice = createSlice({
 });
 
 export default questionsSlice.reducer;
-export const { setCurrentQuestions, setCurrentLevel } = questionsSlice.actions;
+export const { setCurrentQuestions, setCurrentLevel  } = questionsSlice.actions;

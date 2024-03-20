@@ -13,6 +13,16 @@ export const addQuestionsService = async (formData) => {
     return e;
   }
 };
+export const editQuestionsService = async (formData) => {
+  try {
+    const response = await axios.post(`${api_url}/questions/edit-one`, formData);
+    // console.log(response.data);
+    return response.data;
+  } catch (e) {
+    console.log(`err=>`, e);
+    return e;
+  }
+};
 export const getQuestionsService = async (levelId) => {
   try {
     const response = await axios.get(`${api_url}/questions`, { params: { levelId } });

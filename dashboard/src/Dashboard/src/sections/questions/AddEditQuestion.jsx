@@ -1,27 +1,30 @@
 import React, { useState, useRef, useEffect } from "react";
 import Swal from "sweetalert2";
+import Button from "@mui/material/Button";
+import EditIcon from "@mui/icons-material/Edit";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addQuestions } from "../../store/question/questionSlice";
+import { addQuestions, editQuestion } from "../../store/question/questionSlice";
 import InputField from "./InputField";
 import { getLevelThunk } from "../../store/level/levelSlice";
 
-function AddEditQuestion() {
+function AddEditQuestion({ questionId, levelId, oldQuestion, editMode }) {
+  console.log(oldQuestion);
   const layoutRef = useRef();
   const formRef = useRef();
 
   const [formData, setFormData] = useState({
-    value_ar: "",
-    value_en: "",
-    levelId: "",
-    wrong_ans_1_en: "",
-    wrong_ans_1_ar: "",
-    wrong_ans_2_en: "",
-    wrong_ans_2_ar: "",
-    wrong_ans_3_en: "",
-    wrong_ans_3_ar: "",
-    correct_ans_en: "",
-    correct_ans_ar: "",
+    value_ar: oldQuestion ? oldQuestion?.value?.ar : "",
+    value_en: oldQuestion ? oldQuestion?.value?.en : "",
+    levelId: levelId ? levelId : "",
+    wrong_ans_1_en: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[0]?.en : "",
+    wrong_ans_1_ar: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[0]?.ar : "",
+    wrong_ans_2_en: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[1]?.en : "",
+    wrong_ans_2_ar: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[1]?.ar : "",
+    wrong_ans_3_en: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[2]?.en : "",
+    wrong_ans_3_ar: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[2]?.ar : "",
+    correct_ans_en: oldQuestion?.wrong_answers ? oldQuestion?.correct_answer?.en : "",
+    correct_ans_ar: oldQuestion?.wrong_answers ? oldQuestion?.correct_answer?.ar : "",
   });
 
   const handleChange = (e) => {
@@ -33,7 +36,6 @@ function AddEditQuestion() {
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Access the form data in the formData state object
     const isEmpty = Object.values(formData).some((v) => !v);
     if (isEmpty) {
       Swal.fire({
@@ -42,19 +44,16 @@ function AddEditQuestion() {
         text: "All fields must be filled.",
       });
     } else {
-      // All fields are filled, proceed with the submission
-      dispatch(addQuestions(formData));
+      if (!editMode) {
+        dispatch(addQuestions(formData));
+      } else {
+        dispatch(editQuestion({...formData , questionId}));
+      }
       dispatch(getLevelThunk());
     }
   };
   const dispatch = useDispatch();
-  const {
-    levels,
-    levelIsSet,
-    isError,
-    message,
-    isLoading: isLoadingLevel,
-  } = useSelector((s) => s.levels);
+  const { levels, isError, message, isLoading: isLoadingLevel } = useSelector((s) => s.levels);
   // const { currentQuestions, isLoading: isLoadingQuestions } = useSelector((s) => s.questions);
 
   const setVisable = () => {
@@ -87,15 +86,19 @@ function AddEditQuestion() {
 
   return (
     <>
-      <button
-        // data-modal-target="crud-modal"
-        // data-modal-toggle="crud-modal"
-        className="ml-auto mr-auto mb-10  block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
-        onClick={setVisable}
-      >
-        Add New Question
-      </button>
+      {editMode ? (
+        <Button variant="contained" startIcon={<EditIcon />} onClick={setVisable}>
+          Edit
+        </Button>
+      ) : (
+        <button
+          className="ml-auto mr-auto mb-10  block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="button"
+          onClick={setVisable}
+        >
+          Add New Question
+        </button>
+      )}
 
       <div
         style={{ zIndex: 1102 }}
@@ -109,7 +112,7 @@ function AddEditQuestion() {
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Create New Question
+                {editMode ? "Edit Question" : "Create New Question"}
               </h3>
               <button
                 type="button"
@@ -169,7 +172,6 @@ function AddEditQuestion() {
                     onChange={handleChange}
                     className="w-100"
                     inputClassName="rtl text-right"
-
                   />
                 </div>
                 <div className="flex flex-nowrap justify-center items-center gap-9 w-full">
@@ -187,7 +189,6 @@ function AddEditQuestion() {
                     onChange={handleChange}
                     className="w-100"
                     inputClassName="rtl text-right"
-
                   />
                 </div>
                 <div className="flex flex-nowrap justify-center items-center gap-9 w-full">
@@ -205,7 +206,6 @@ function AddEditQuestion() {
                     onChange={handleChange}
                     className="w-100"
                     inputClassName="rtl text-right"
-
                   />
                 </div>
                 <div className="flex flex-nowrap justify-center items-center gap-9 w-full">
@@ -223,31 +223,32 @@ function AddEditQuestion() {
                     onChange={handleChange}
                     className="w-100"
                     inputClassName="rtl text-right"
-
                   />
                 </div>
 
-                <div className="col-span-2 sm:col-span-1">
-                  <label
-                    htmlFor="level"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Level
-                  </label>
-                  <select
-                    name="levelId"
-                    value={formData.levelId}
-                    onChange={handleChange}
-                    className="bg-gray-50 border w-100 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  >
-                    <option selected="">Select Level</option>
-                    {levels.map((level) => (
-                      <option key={level?._id} value={level?._id}>
-                        {level?.name_en}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {!editMode && (
+                  <div className="col-span-2 sm:col-span-1">
+                    <label
+                      htmlFor="level"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Level
+                    </label>
+                    <select
+                      name="levelId"
+                      value={formData.levelId}
+                      onChange={handleChange}
+                      className="bg-gray-50 border w-100 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    >
+                      <option selected="">Select Level</option>
+                      {levels.map((level) => (
+                        <option key={level?._id} value={level?._id}>
+                          {level?.name_en}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
               <button
                 type="submit"
@@ -265,7 +266,7 @@ function AddEditQuestion() {
                     clip-rule="evenodd"
                   ></path>
                 </svg>
-                Add New Question
+                {editMode ? "Edit Question" : "Add New Question"}
               </button>
             </form>
           </div>

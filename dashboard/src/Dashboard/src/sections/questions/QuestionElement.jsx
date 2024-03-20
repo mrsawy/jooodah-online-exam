@@ -2,9 +2,12 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+
 import Swal from "sweetalert2";
 import { deleteQuestion } from "../../store/question/questionSlice";
 import { getLevelThunk } from "../../store/level/levelSlice";
+import AddEditQuestion from "./AddEditQuestion";
 
 export default function QuestionElement({ _id, correct_answer, wrong_answers, value, id, index }) {
   const dispatch = useDispatch();
@@ -25,6 +28,7 @@ export default function QuestionElement({ _id, correct_answer, wrong_answers, va
       }
     });
   };
+  const handleEdit = () => {};
   return (
     <>
       <h2 id={`accordion-color-heading-${id}-${index}`}>
@@ -57,10 +61,11 @@ export default function QuestionElement({ _id, correct_answer, wrong_answers, va
               whiteSpace: `nowrap`,
             }}
           >
+            <span className=" me-3">{index + 1} {")"}</span>
             {value?.en}
           </span>
           <div className="flex flex-row items-center gap-8">
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row items-center gap-5">
               <Button
                 variant="contained"
                 startIcon={<DeleteIcon />}
@@ -69,6 +74,20 @@ export default function QuestionElement({ _id, correct_answer, wrong_answers, va
               >
                 Delete
               </Button>
+              {/* <Button variant="contained" startIcon={<EditIcon />} onClick={handleEdit}>
+                Edit
+              </Button> */}
+              <AddEditQuestion
+                editMode={true}
+                levelId={currentLevel?._id}
+                questionId={_id}
+                oldQuestion={{
+                  _id,
+                  value,
+                  correct_answer,
+                  wrong_answers,
+                }}
+              />
             </div>
 
             <svg
