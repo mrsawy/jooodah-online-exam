@@ -45,7 +45,6 @@ const Main = ({ startQuiz }) => {
   const validationSchema = yup.object().shape({
     name: yup
       .string()
-
       .required("Name is required"),
     firstName: yup
       .string()

@@ -1,7 +1,7 @@
 const shuffle = (ansArray) => {
   ansArray = [...ansArray];
 
-  let resultArray = Array(4).fill(null);
+  let resultArray = Array(ansArray.length).fill(null);
 
   if (
     ansArray.some(
@@ -31,7 +31,7 @@ const shuffle = (ansArray) => {
         containsNoCase(element, `A and C`) ||
         containsNoCase(element, `كلاً من (A) و (C)`)
       ) {
-        resultArray[3] = element;
+        resultArray[ansArray.length - 1] = element;
         ansArray = ansArray.filter((e) => e != element);
       }
       if (
@@ -39,7 +39,7 @@ const shuffle = (ansArray) => {
         containsNoCase(element, `all of the abov`) ||
         containsNoCase(element, `ا شيء مما س`)
       ) {
-        resultArray[3] = element;
+        resultArray[ansArray.length - 1] = element;
         ansArray = ansArray.filter((e) => e != element);
       }
     });

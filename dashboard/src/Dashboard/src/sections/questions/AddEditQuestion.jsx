@@ -23,6 +23,8 @@ function AddEditQuestion({ questionId, levelId, oldQuestion, editMode }) {
     wrong_ans_2_ar: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[1]?.ar : "",
     wrong_ans_3_en: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[2]?.en : "",
     wrong_ans_3_ar: oldQuestion?.wrong_answers ? oldQuestion?.wrong_answers[2]?.ar : "",
+    wrong_ans_4_en: !!oldQuestion?.wrong_answers[3] ? oldQuestion?.wrong_answers[3]?.en : "",
+    wrong_ans_4_ar: !!oldQuestion?.wrong_answers[3] ? oldQuestion?.wrong_answers[3]?.ar : "",
     correct_ans_en: oldQuestion?.wrong_answers ? oldQuestion?.correct_answer?.en : "",
     correct_ans_ar: oldQuestion?.wrong_answers ? oldQuestion?.correct_answer?.ar : "",
   });
@@ -36,7 +38,11 @@ function AddEditQuestion({ questionId, levelId, oldQuestion, editMode }) {
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    const isEmpty = Object.values(formData).some((v) => !v);
+    const isEmpty = Object.values({
+      ...formData,
+      wrong_ans_4_en: formData.wrong_ans_4_en ? formData.wrong_ans_4_en : "temp",
+      wrong_ans_4_ar: formData.wrong_ans_4_ar ? formData.wrong_ans_4_ar : "temp",
+    }).some((v) => !v);
     if (isEmpty) {
       Swal.fire({
         icon: "error",
@@ -47,7 +53,7 @@ function AddEditQuestion({ questionId, levelId, oldQuestion, editMode }) {
       if (!editMode) {
         dispatch(addQuestions(formData));
       } else {
-        dispatch(editQuestion({...formData , questionId}));
+        dispatch(editQuestion({ ...formData, questionId }));
       }
       dispatch(getLevelThunk());
     }
@@ -203,6 +209,23 @@ function AddEditQuestion({ questionId, levelId, oldQuestion, editMode }) {
                     label="Third Wrong Answer Arabic"
                     name="wrong_ans_3_ar"
                     value={formData.wrong_ans_3_ar}
+                    onChange={handleChange}
+                    className="w-100"
+                    inputClassName="rtl text-right"
+                  />
+                </div>
+                <div className="flex flex-nowrap justify-center items-center gap-9 w-full">
+                  <InputField
+                    label="Fourth Wrong Answer English"
+                    name="wrong_ans_4_en"
+                    value={formData.wrong_ans_4_en}
+                    onChange={handleChange}
+                    className="w-100"
+                  />
+                  <InputField
+                    label="Fourth Wrong Answer Arabic"
+                    name="wrong_ans_4_ar"
+                    value={formData.wrong_ans_4_ar}
                     onChange={handleChange}
                     className="w-100"
                     inputClassName="rtl text-right"

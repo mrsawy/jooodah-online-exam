@@ -243,6 +243,8 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                         const id = option;
                         if (!uniqueOptions[id]) {
                           uniqueOptions[id] = true;
+
+                          {/* console.log(data[questionIndex].options); */}
                           return true;
                         }
                         return false;

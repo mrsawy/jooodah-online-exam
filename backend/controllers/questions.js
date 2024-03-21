@@ -76,9 +76,11 @@ module.exports = {
       wrong_ans_1_en,
       wrong_ans_2_en,
       wrong_ans_3_en,
+      wrong_ans_4_en,
       wrong_ans_1_ar,
       wrong_ans_2_ar,
       wrong_ans_3_ar,
+      wrong_ans_4_ar,
       correct_ans_ar,
       correct_ans_en,
     } = req.body;
@@ -90,7 +92,8 @@ module.exports = {
         { ar: wrong_ans_1_ar, en: wrong_ans_1_en },
         { ar: wrong_ans_2_ar, en: wrong_ans_2_en },
         { ar: wrong_ans_3_ar, en: wrong_ans_3_en },
-      ],
+        { ar: wrong_ans_4_ar, en: wrong_ans_4_en },
+      ].filter((e) => e.ar && e.en),
     };
 
     // console.log(req.body);
