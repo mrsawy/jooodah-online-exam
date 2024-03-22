@@ -6,6 +6,10 @@ const siteRouter = express.Router();
 
 siteRouter.get("/", jooodahResolver(siteController.getSiteData));
 siteRouter.post("/", jooodahResolver(siteController.setSiteData));
+// siteRouter.get("/", jooodahResolver(siteController.setSiteData));
+siteRouter.post("/upload/:fileName", jooodahResolver(siteController.setSiteUploads));
+// siteRouter.get("/", jooodahResolver(siteController.setSiteData));
+// siteRouter.post("/", jooodahResolver(siteController.setSiteData));
 // usersRouter.delete("/", jooodahResolver(siteController.deleteUser));
 
 

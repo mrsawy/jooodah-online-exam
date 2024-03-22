@@ -27,7 +27,7 @@ export default function AppView() {
           {/* <BasicLineChart className="flex flex-col flex-nowrap  border-b-4" /> */}
           <ScatterChart />
         </div>
-        <div className="flex justify-center items-center w-full lg:w-2/4">
+        <div className="flex justify-center items-center w-full lg:w-2/4 m-auto">
           <BasicPieChart className="mt-24" />
         </div>
       </div>

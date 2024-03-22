@@ -3,30 +3,19 @@ import { useSelector } from "react-redux";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Chart } from "primereact/chart";
 
-import formatResults from "../../utils/formatResults";
+// import formatResults from "../../utils/formatResults";
+import { ProgressSpinner } from "primereact/progressspinner";
+
 import formatPieChart from "../../utils/formatPieChart";
 
 export default function BasicPieChart({ label, data, className }) {
-  const { users } = useSelector((s) => s.user);
+  const { users , isLoading } = useSelector((s) => s.user);
   let results = formatPieChart({ users });
-  // return (
-  //   <div className={"flex justify-center items-center  " + className}>
-  //     <PieChart
-  //       series={[
-  //         {
-  //           data: results,
-  //         },
-  //       ]}
-  //       width={400}
-  //       height={200}
-  //     />
-  //   </div>
-  // );
+
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
-
-  console.log(results)
+  // console.log(`results pie chart =>`, results);
   useEffect(() => {
     const documentStyle = getComputedStyle(document.documentElement);
     const data = {
@@ -59,9 +48,13 @@ export default function BasicPieChart({ label, data, className }) {
 
     setChartData(data);
     setChartOptions(options);
-  }, []);
+  }, [users]);
 
-  return (
+  return isLoading ? (
+    <div className="flex  w-full justify-center items-center m-auto">
+      <ProgressSpinner />
+    </div>
+  ) : (
     <div className="card flex justify-content-center mt-16">
       <Chart type="pie" data={chartData} options={chartOptions} className="w-full md:w-30rem" />
     </div>

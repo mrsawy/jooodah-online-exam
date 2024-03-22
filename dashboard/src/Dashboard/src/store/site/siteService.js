@@ -11,3 +11,8 @@ export const setSiteData = async (args) => {
   const response = await axios.post(`${api_url}/site`, args);
   return response.data;
 };
+
+export const setSiteDataUpload = async (args) => {
+  const response = await axios.post(`${api_url}/site/upload/${args.name}`, args.formData);
+  return response.data;
+};

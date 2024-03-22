@@ -10,13 +10,15 @@ export default function BasicDemo() {
   const [text, setText] = useState("");
 
   useLayoutEffect(() => {
-    let value = siteData?.find((d) => d?.identifier == `instructions`)?.value;
-    if (value) {
-      // console.log(`value has`);
-      setTimeout(() => {
-        setText(value);
-        // console.log(`timeout`);
-      }, 100);
+    if (Array.isArray(siteData)) {
+      let value = siteData?.find((d) => d?.identifier == `instructions`)?.value;
+      if (value) {
+        // console.log(`value has`);
+        setTimeout(() => {
+          setText(value);
+          // console.log(`timeout`);
+        }, 100);
+      }
     }
   }, [siteData]);
 

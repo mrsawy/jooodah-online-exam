@@ -1,15 +1,10 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import PropTypes from "prop-types";
 import SendIcon from "@mui/icons-material/Send";
-
 import Swal from "sweetalert2";
-import { setCurrentQuestion, setLevel, setPauseTime } from "./../../store/exam/examlSlice";
+import { setLevel, setPauseTime } from "./../../store/exam/examlSlice";
 import { setUserData } from "./../../store/user/userSlice";
-import { api_url } from "./../../utils/base_url";
-import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
-import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOutlined";
-import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+import { api_url, base_url } from "./../../utils/base_url";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import countries from "./CountryCodeIntput/countries.json";
 
@@ -34,18 +29,30 @@ import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import * as yup from "yup";
-import mindImg from "../../images/logo.png";
+// import mindImg from "../../images/logo.png";
 import { shuffle } from "../../utils";
 import formatExam from "../../utils/formatExam";
 import NumericInput from "../NumericInput";
 import CountryCodeInput from "./CountryCodeIntput/CountryCodeIntput";
-import {setCurrentQuestions} from "./../../store/exam/examlSlice";
+import { setCurrentQuestions } from "./../../store/exam/examlSlice";
 
 const Main = ({ startQuiz }) => {
+  const [logo, setLogo] = useState(``);
+  useEffect(() => {
+    (async () => {
+      const response = await axios.get(`${api_url}/site`);
+      const result = response.data;
+      // console.log(result);
+      const value = result?.find((item) => item.identifier == "joodah_logo")?.value;
+      // const valueAr = result?.find((item) => item.identifier == `instructions-ar`)?.value;
+      if (value) {
+        setLogo(base_url + "/" + value);
+      }
+    })();
+  } , []);
+
   const validationSchema = yup.object().shape({
-    name: yup
-      .string()
-      .required("Name is required"),
+    name: yup.string().required("Name is required"),
     firstName: yup
       .string()
       .required("First name is required")
@@ -68,7 +75,8 @@ const Main = ({ startQuiz }) => {
   let currLang = i18n.language;
 
   const dispatch = useDispatch();
-  let { levels  } = useSelector((s) => s.exam);
+  let { levels } = useSelector((s) => s.exam);
+  // let { siteData } = useSelector((s) => s.site);
   const [category, setCategory] = useState(null);
   const [examLang, setExamLang] = useState(null);
   const [name, setName] = useState(``);
@@ -104,7 +112,7 @@ const Main = ({ startQuiz }) => {
         return;
       }
       setProcessing(true);
-      const response = await axios.post(`${api_url}/users/check`, { email, phone:fullPhone });
+      const response = await axios.post(`${api_url}/users/check`, { email, phone: fullPhone });
       if (response.status !== 200) {
         Swal.fire({
           icon: "error",
@@ -131,7 +139,7 @@ const Main = ({ startQuiz }) => {
       });
 
       setProcessing(false);
-      dispatch(setCurrentQuestions(results))
+      dispatch(setCurrentQuestions(results));
       startQuiz(results, numberOfMinutes * 60);
     } catch (e) {
       if (Array.isArray(e?.errors) && e?.errors?.length > 0) {
@@ -157,8 +165,8 @@ const Main = ({ startQuiz }) => {
       <Segment>
         <Item.Group divided>
           <Item>
-            <div className="flex flex-col gap-1 justify-center items-center px-4">
-              <Item.Image src={mindImg} />
+            <div className="flex flex-col gap-1 justify-center items-center px-4 mb-3 pb-2 max-w-[250px]" >
+              <Item.Image  src={logo} />
             </div>
             <Item.Content>
               <Item.Header>
@@ -189,7 +197,6 @@ const Main = ({ startQuiz }) => {
                 <div className="w-100 lg:w-auto">
                   <p> {t(`Family Name`)} </p>
                   <Input
-
                     value={lastName}
                     onChange={(_, { value }) => {
                       setLastName(value);
@@ -282,7 +289,6 @@ const Main = ({ startQuiz }) => {
               </Item.Meta>
               <Divider />
               <Item.Extra>
-          
                 <Button
                   onClick={fetchData}
                   disabled={processing}

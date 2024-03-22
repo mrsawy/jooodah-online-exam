@@ -1,13 +1,22 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
 import { Container, Menu, Item } from "semantic-ui-react";
-import thnxImg from "../../images/8177656.jpg";
-
-import Stats from "./Stats";
-import QNA from "./QNA";
-
+import { base_url , api_url } from "../../utils/base_url";
 const Result = () => {
   const [activeTab, setActiveTab] = useState("Stats");
+
+  const [thnxImg, setThnxImg] = useState(``);
+  useEffect(() => {
+    (async () => {
+      const response = await axios.get(`${api_url}/site`);
+      const result = response.data;
+      const value = result?.find((item) => item.identifier == "joodah_thnx")?.value;
+      if (value) {
+        setThnxImg(base_url + "/" + value);
+      }
+    })();
+  }, []);
 
   const handleTabClick = (e, { name }) => {
     setActiveTab(name);
@@ -18,30 +27,8 @@ const Result = () => {
       <div className=" h-screen flex justify-center items-center">
         <img className="  h-4/6  object-contain " src={thnxImg} />
       </div>
-      {/* <Item.Image className="  max-h-full   " src={thnxImg} /> */}
-      {/* <h1>test</h1> */}
-
-      {/* <Menu fluid widths={2}>
-        <Menu.Item
-          name="Stats"
-          active={activeTab === 'Stats'}
-          onClick={handleTabClick}
-        />
-        <Menu.Item
-          name="QNA"
-          active={activeTab === 'QNA'}
-          onClick={handleTabClick}
-        />
-      </Menu> */}
     </Container>
   );
 };
-
-// Result.propTypes = {
-//   totalQuestions: PropTypes.number.isRequired,
-//   correctAnswers: PropTypes.number.isRequired,
-//   timeTaken: PropTypes.number.isRequired,
-//   questionsAndAnswers: PropTypes.array.isRequired,
-// };
 
 export default Result;

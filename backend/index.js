@@ -1,9 +1,10 @@
 const express = require("express");
 var cors = require("cors");
 var path = require("path");
+require("dotenv").config();
 
 const mainApiRoute = require("./routes/index");
-require("dotenv").config();
+//
 const db = require("./database/config");
 const { notFound, errorHandler } = require("./utils/errorHandler");
 
@@ -19,24 +20,24 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", mainApiRoute);
-
-// app.get("/", (req, res) => {
-
-
-  app.use(express.static(path.join(__dirname, "front-build")));
-  app.get(`*`, (req, res) => {
-    res.sendFile(path.join(__dirname, "front-build", "index.html"));
-  });
+app.use(`/uploads`,express.static(path.join(__dirname, "uploads")));
+// app.get(`/uploads`, (req, res) => {
+//   res.sendFile(path.join(__dirname, "front-build", "index.html"));
+// });
+app.use(express.static(path.join(__dirname, "front-build")));
+app.get(`*`, (req, res) => {
+  res.sendFile(path.join(__dirname, "front-build", "index.html"));
+});
 
 // });
 
 app.use(notFound);
 app.use(errorHandler);
 
-// db.then(() => {
+db.then(() => {
   app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
   });
-// }).catch((err) => {
-  // console.log(err);
-// });
+}).catch((err) => {
+  console.log(err);
+})

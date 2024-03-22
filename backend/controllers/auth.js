@@ -2,6 +2,8 @@ const Admin = require(`./../models/Admin`);
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const SECRET_KEY = process.env.secret_key;
+
 module.exports = {
   login: async (req, res) => {
     let { email, password } = req.body;
@@ -19,7 +21,7 @@ module.exports = {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    const token = jwt.sign({ id: admin._id, email }, "secret_key");
+    const token = jwt.sign({ id: admin._id, email }, SECRET_KEY);
     res.json({ token, id: admin._id });
   },
   signUp: async (req, res) => {
@@ -27,7 +29,7 @@ module.exports = {
     const hashedPassword = await bcrypt.hash(password, 10);
     const admin = new Admin({ email, password: hashedPassword });
     await admin.save();
-    const token = jwt.sign({ id: admin._id, email }, "secret_key");
+    const token = jwt.sign({ id: admin._id, email }, SECRET_KEY);
     res.status(201).json({ token, id: admin._id });
   },
   checkAuth: async (req, res) => {
@@ -38,7 +40,7 @@ module.exports = {
     }
     const admin = await Admin.findById(id);
 
-    jwt.verify(token, "secret_key", (err, decoded) => {
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
       // console.log(admin , decoded , err)
       if (err && !admin) {
         return res.status(401).json({ error: "Unauthorized. Invalid token." });
