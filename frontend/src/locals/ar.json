@@ -30,17 +30,17 @@
   "Skip": "تخطي",
   "Finish": "إنهاء",
   "Pause": "توقف",
-  "Please Answer All Questions.": "برجاء الإجابة على جميع الأسئلة.",
+  "Please Answer All Questions.": "يرجى الإجابة على جميع الأسئلة.",
   "Q": "س",
   "Just a moment!": "إنتظر قليلا",
   "Fetching your results...": "يتم الأن حفظ نتائجك",
   "Loading your quiz...": "يتم تحميل الإختبار الأن",
   "It won't be long!": "لن يتأخر الأمر !",
   "Previous": "السابق",
-  "All fields must be filled.": "برجاء ملء جميع الخانات ",
-  "Please choose one of the following answers:": "برجاء إختيار إجابة من الإجابات التالية",
+  "All fields must be filled.": "يرجى ملء جميع الخانات ",
+  "Please choose one of the following answers:": "يرجى إختيار إجابة من الإجابات التالية",
   "User with the same email or phone already exists": "تم التسجيل في الإختبار مسبقا",
-  "which position are you applying for ?": "برجاء إختيار الوظيفة ",
+  "which position are you applying for ?": "يرجى إختيار الوظيفة ",
   "SA": "المملكة العربية السعودية",
   "AE": "الإمارات العربية المتحدة",
   "EG": "مصر",
@@ -59,6 +59,11 @@
   "PS": "فلسطين",
   "SD": "السودان",
   "TN": "تونس",
+  "TR": "تركيا",
+  "FR": "فرنسا",
+  "GB": "بريطانيا",
+  "AT": "النمسا",
+  "ES": "إسبانيا",
   "code": "الكود",
   "Name is required": "حقل الإسم مطلوب",
   "Phone is required": "رقم الهاتف مطلوب",
@@ -76,5 +81,15 @@
   "Cant Make That Action":"لا يمكن التنفيذ" , 
   "Exam Is Paused":"الإختبار متوقف بالفعل" , 
   "You Need To Choose An Answer First":"يجب إختيار إجابة أولا" , 
-  "no":"لا"
+  "no":"لا" , 
+  "Please Select Your Highest Education Level":"يرجى إختيار الدرجة العلمية", 
+  "Please Choose Your experience":"يرجى تحديد عدد سنوات الخبرة العلمية", 
+  "Please Choose Your age":"يرجى تحديد العمر", 
+  "Select your experience":"تحديد الخبرة العلمية",
+  "Select your age":"تحديد العمر"
+
+
+  
+
+
 }

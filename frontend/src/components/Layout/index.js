@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import Header from '../Header';
 
-const Layout = ({ children }) => {
+const Layout = ({ children  , isQuizStarted}) => {
   return (
     <Fragment>
-      <Header />
+      <Header isQuizStarted={isQuizStarted} />
       <main>{children}</main>
     </Fragment>
   );

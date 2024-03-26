@@ -148,6 +148,16 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
       showCloseButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
+        console.log(
+          {
+            totalQuestions: data?.length,
+            correctAnswers: 0,
+            timeTaken,
+            questionsAndAnswers: questionsAndAnswers.filter((e) => e),
+            fullTime: countdownTime,
+          },
+          { quite: true }
+        );
         endQuiz(
           {
             totalQuestions: data?.length,
@@ -158,7 +168,7 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
           },
           { quite: true }
         );
-        onQuite();
+        // onQuite();
       }
     });
   };
@@ -244,7 +254,9 @@ const Quiz = ({ data, countdownTime, endQuiz, onQuite }) => {
                         if (!uniqueOptions[id]) {
                           uniqueOptions[id] = true;
 
-                          {/* console.log(data[questionIndex].options); */}
+                          {
+                            /* console.log(data[questionIndex].options); */
+                          }
                           return true;
                         }
                         return false;

@@ -83,7 +83,7 @@ const App = () => {
   return examDataIsLoading ? (
     <Spinner className=" h-screen" />
   ) : (
-    <Layout>
+    <Layout isQuizStarted={isQuizStarted}>
       {loading && <Loader {...loadingMessage} />}
       {!loading && !isQuizStarted && !isQuizCompleted && <Main startQuiz={startQuiz} />}
       {!loading && isQuizStarted && !isQuite && (

@@ -15,6 +15,21 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    age: {
+      type: Number,
+      required: true,
+      // defaultValue: "N/A",
+    },
+    experience: {
+      type: String,
+      required: true,
+      // defaultValue: "N/A",
+    },
+    education: {
+      type: String,
+      required: true,
+      // defaultValue: "N/A",
+    },
     fullTime: {
       type: Number,
       required: false,
@@ -27,7 +42,7 @@ const UserSchema = new mongoose.Schema(
       timeTaken: Number,
       totalQuestions: Number,
       correctAnswers: Number,
-      questionsAndAnswers: [],
+      // questionsAndAnswers: [],
       fullTime: {
         type: Number,
         required: false,

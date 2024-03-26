@@ -31,6 +31,9 @@ export default function UserTableRow({
   exam,
   id,
   handleClick,
+  age,
+  experience,
+  education,
 }) {
   const dispatch = useDispatch();
 
@@ -50,7 +53,7 @@ export default function UserTableRow({
         {/* <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell> */}
-{/* 
+        {/* 
         <TableCell className="  pl-5" component="th" scope="row" padding="none" align="center">
           <Stack direction="row" alignItems="center" spacing={2}>
             <Typography variant="subtitle2" noWrap sx={{ textAlign: `center`, margin: `auto` }}>
@@ -64,11 +67,13 @@ export default function UserTableRow({
 
         <TableCell align="center">{phone}</TableCell>
 
-        <TableCell align="center">{grade.toFixed(0)} / 100</TableCell>
-        <TableCell align="center" className="text-center m-auto">
-          {exam}
-        </TableCell>
-        <TableCell align="center">{date}</TableCell>
+        <TableCell align="center">{age}</TableCell>
+        <TableCell align="center">{education}</TableCell>
+        <TableCell align="center">{experience}</TableCell>
+        {/* <TableCell align="center" className="text-center m-auto"> */}
+          {/* {exam} */}
+        {/* </TableCell> */}
+        {/* <TableCell align="center">{date}</TableCell> */}
         <TableCell align="center">
           <BasicModal result={result} grade={grade} date={date} />
         </TableCell>

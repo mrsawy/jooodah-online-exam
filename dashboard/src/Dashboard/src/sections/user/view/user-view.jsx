@@ -151,9 +151,9 @@ export default function UserPage() {
                   { id: "name", label: "Name" },
                   { id: "email", label: "Email" },
                   { id: "phone", label: "Phone" },
-                  { id: "grade", label: "Grade" },
-                  { id: "exam", label: "Exam" },
-                  { id: "date", label: "Date" },
+                  { id: "Age", label: "Age" },
+                  { id: "Education", label: "Education" },
+                  { id: "Experience", label: "Experience" },
                   { id: "result", label: "Result" },
                   // { id: "status", label: "Status" },
                   { id: "" },
@@ -162,22 +162,28 @@ export default function UserPage() {
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      id={row?.id}
-                      name={row.name}
-                      email={row.email}
-                      phone={row.phone}
-                      grade={row.grade}
-                      exam={row.exam}
-                      date={row.date}
-                      result={row.result}
-                      status={row.status}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                    />
-                  ))}
+                  .map((row) => {
+                    {/* console.log(row); */}
+                    return (
+                      <UserTableRow
+                        key={row.id}
+                        id={row?.id}
+                        name={row.name}
+                        email={row.email}
+                        phone={row.phone}
+                        grade={row.grade}
+                        exam={row.exam}
+                        age={row.age}
+                        education={row.education}
+                        experience={row.experience}
+                        date={row.date}
+                        result={row.result}
+                        status={row.status}
+                        selected={selected.indexOf(row.name) !== -1}
+                        handleClick={(event) => handleClick(event, row.name)}
+                      />
+                    );
+                  })}
 
                 <TableEmptyRows
                   height={77}

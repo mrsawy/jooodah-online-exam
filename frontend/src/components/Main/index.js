@@ -1,12 +1,13 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SendIcon from "@mui/icons-material/Send";
 import Swal from "sweetalert2";
 import { setLevel, setPauseTime } from "./../../store/exam/examlSlice";
 import { setUserData } from "./../../store/user/userSlice";
 import { api_url, base_url } from "./../../utils/base_url";
-import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import { experiences, ages, eduLevels } from "./../../constants/ages";
 import countries from "./CountryCodeIntput/countries.json";
+import ReCAPTCHA from "react-google-recaptcha";
 
 // import InstructionModal from "./../InstructionModal";
 
@@ -14,7 +15,7 @@ import countries from "./CountryCodeIntput/countries.json";
 
 import {
   Input,
-  Container,
+  // Container,
   Segment,
   Item,
   Dropdown,
@@ -36,49 +37,55 @@ import NumericInput from "../NumericInput";
 import CountryCodeInput from "./CountryCodeIntput/CountryCodeIntput";
 import { setCurrentQuestions } from "./../../store/exam/examlSlice";
 
+//
+
+const validationSchema = yup.object().shape({
+  email: yup.string().email("Invalid email").required("Email is required"),
+  phone: yup.string().required("Phone is required"),
+  fullPhone: yup
+    .string()
+    .required("Phone is required")
+    .min(12, "Phone must be at least 11 numbers")
+    .max(14, "Phone cannot exceed 13 number"),
+  name: yup.string().required("Name is required"),
+  lastName: yup
+    .string()
+    .required("last Name is required")
+    .matches(/^[A-Za-z\u0600-\u06FF]+$/, "Name can only contain letters"),
+  firstName: yup
+    .string()
+    .required("First name is required")
+    .matches(/^[A-Za-z\u0600-\u06FF]+$/, "Name can only contain letters"),
+});
+//
 const Main = ({ startQuiz }) => {
   const [logo, setLogo] = useState(``);
+  const [age, setAge] = useState(20);
+  const [captchaIsChanged, setCaptchaIsChanged] = useState(false);
+  const [exp, setExp] = useState(1);
+  const [eduLevel, setEduLevel] = useState("Bachelor's Degree - درجة بكالوريوس");
+
+  function onReCAPTCHAChange(value) {
+    // console.log("Captcha value:", value);
+    setCaptchaIsChanged(!!value);
+  }
   useEffect(() => {
     (async () => {
       const response = await axios.get(`${api_url}/site`);
       const result = response.data;
-      // console.log(result);
       const value = result?.find((item) => item.identifier == "joodah_logo")?.value;
-      // const valueAr = result?.find((item) => item.identifier == `instructions-ar`)?.value;
       if (value) {
         setLogo(base_url + "/" + value);
       }
     })();
-  } , []);
+  }, []);
 
-  const validationSchema = yup.object().shape({
-    name: yup.string().required("Name is required"),
-    firstName: yup
-      .string()
-      .required("First name is required")
-      .matches(/^[A-Za-z\u0600-\u06FF]+$/, "Name can only contain letters"),
-
-    lastName: yup
-      .string()
-      .required("last Name is required")
-      .matches(/^[A-Za-z\u0600-\u06FF]+$/, "Name can only contain letters"),
-
-    phone: yup.string().required("Phone is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
-    fullPhone: yup
-      .string()
-      .required("Phone is required")
-      .min(12, "Phone must be at least 11 numbers")
-      .max(14, "Phone cannot exceed 13 number"),
-  });
   const { i18n, t } = useTranslation();
   let currLang = i18n.language;
 
   const dispatch = useDispatch();
   let { levels } = useSelector((s) => s.exam);
-  // let { siteData } = useSelector((s) => s.site);
   const [category, setCategory] = useState(null);
-  const [examLang, setExamLang] = useState(null);
   const [name, setName] = useState(``);
   const [firstName, setFirstName] = useState(``);
   const [lastName, setLastName] = useState(``);
@@ -88,6 +95,9 @@ const Main = ({ startQuiz }) => {
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
+  const [examLang, setExamLang] = useState(currLang);
+  // const [error, setError] = useState(null);
 
   let allFieldsSelected = false;
   if (category && examLang) {
@@ -122,7 +132,9 @@ const Main = ({ startQuiz }) => {
         return;
       }
 
-      dispatch(setUserData({ name, phone: fullPhone, email }));
+      dispatch(
+        setUserData({ name, phone: fullPhone, email, age, experience: exp, education: eduLevel })
+      );
 
       const {
         questions: results,
@@ -133,6 +145,7 @@ const Main = ({ startQuiz }) => {
         levelId: category,
         examLang,
       });
+
       dispatch(setPauseTime(pauseTime));
       results.forEach((element) => {
         element.options = shuffle([element.correct_answer, ...element.incorrect_answers]);
@@ -141,6 +154,7 @@ const Main = ({ startQuiz }) => {
       setProcessing(false);
       dispatch(setCurrentQuestions(results));
       startQuiz(results, numberOfMinutes * 60);
+      i18n.changeLanguage(examLang);
     } catch (e) {
       if (Array.isArray(e?.errors) && e?.errors?.length > 0) {
         Swal.fire({
@@ -161,12 +175,12 @@ const Main = ({ startQuiz }) => {
   };
 
   return (
-    <Container>
+    <div className="ui md:mx-16 xl:mx-64 ">
       <Segment>
         <Item.Group divided>
           <Item>
-            <div className="flex flex-col gap-1 justify-center items-center px-4 mb-3 pb-2 max-w-[250px]" >
-              <Item.Image  src={logo} />
+            <div className="flex flex-col gap-1 justify-center items-center px-4 mb-3 pb-2 max-w-[250px]">
+              <Item.Image src={logo} />
             </div>
             <Item.Content>
               <Item.Header>
@@ -186,8 +200,8 @@ const Main = ({ startQuiz }) => {
                   <Input
                     value={firstName}
                     onChange={(_, { value }) => {
-                      setFirstName(value);
-                      setName(`${value} ${lastName}`);
+                      setFirstName(value.trim(``));
+                      setName(`${value.trim(``)} ${lastName}`);
                     }}
                     name="fname"
                     className="w-100 lg:w-auto"
@@ -199,8 +213,8 @@ const Main = ({ startQuiz }) => {
                   <Input
                     value={lastName}
                     onChange={(_, { value }) => {
-                      setLastName(value);
-                      setName(`${firstName} ${value}`);
+                      setLastName(value.trim(``));
+                      setName(`${firstName} ${value.trim(``)}`);
                     }}
                     name="lname"
                     placeholder={`${t("Family Name")}...`}
@@ -210,38 +224,118 @@ const Main = ({ startQuiz }) => {
               </div>
               <Divider />
 
-              <p>{t(`Phone_Number`)} </p>
-              <div className={`flex ${currLang == "ar" ? "flex-row-reverse" : "flex-row"}`}>
-                <CountryCodeInput
-                  selectedCountry={selectedCountry}
-                  onChange={(e) => {
-                    setSelectedCountry(e.value);
-                    setFullPhone(`${e.value[`phone-code`]} ${phone}`);
-                  }}
-                  className=" min-w-32"
-                  countries={countries}
-                />
-                <NumericInput
-                  value={phone}
-                  onChange={({ target }) => {
-                    setPhone(target?.value);
-                    setFullPhone(`${selectedCountry[`phone-code`]} ${target?.value}`);
-                  }}
-                  className="w-100 numiricPhone"
-                  placeholder={`${t("phone")}...`}
-                />
+              <div className=" flex flex-col lg:flex-row lg:flex-nowrap gap-10">
+                <div className="w-100 lg:w-auto">
+                  <p>{t(`Phone_Number`)} </p>
+                  <div className={`flex ${currLang == "ar" ? "flex-row-reverse" : "flex-row"}`}>
+                    <CountryCodeInput
+                      selectedCountry={selectedCountry}
+                      onChange={(e) => {
+                        setSelectedCountry(e.value);
+                        setFullPhone(`${e.value[`phone-code`]} ${phone}`);
+                      }}
+                      className=" min-w-32"
+                      countries={countries}
+                    />
+                    <NumericInput
+                      value={phone}
+                      onChange={({ target }) => {
+                        setPhone(target?.value);
+                        setFullPhone(`${selectedCountry[`phone-code`]} ${target?.value}`);
+                      }}
+                      className="w-100 numiricPhone"
+                      placeholder={`${t("phone")}...`}
+                    />
+                  </div>
+                </div>
+                <div className="w-100 lg:w-auto">
+                  <p> {t(`Email_Adress`)} </p>
+                  <Input
+                    value={email}
+                    onChange={(_, { value }) => {
+                      setEmail(value);
+                    }}
+                    className="w-100"
+                    placeholder={`${t("email")}...`}
+                  />
+                </div>
+              </div>
+
+              {/* <Divider /> */}
+
+              <Divider />
+              <Item.Meta>
+                <div className=" flex flex-col lg:flex-row lg:flex-nowrap gap-10">
+                  <div className="w-100 lg:w-auto">
+                    <p>{t(`Please Choose Your age`)}</p>
+                    <Dropdown
+                      fluid
+                      selection
+                      name="age"
+                      placeholder={t("Select your age")}
+                      header={t("Select your age")}
+                      options={ages}
+                      value={age}
+                      onChange={(_, e) => {
+                        setAge(e?.value);
+                      }}
+                      disabled={processing}
+                    />
+                  </div>
+                  <div className="w-100 lg:w-auto">
+                    <p>{t(`Please Choose Your experience`)}</p>
+                    <Dropdown
+                      fluid
+                      selection
+                      name="experience"
+                      placeholder={t("Select your experience")}
+                      header={t("Select your experience")}
+                      options={experiences}
+                      value={exp}
+                      onChange={(_, e) => {
+                        setExp(e?.value);
+                      }}
+                      disabled={processing}
+                    />
+                  </div>
+                </div>
+              </Item.Meta>
+              <Divider />
+              <div className=" flex flex-col lg:flex-row lg:flex-nowrap gap-10">
+                <div className="w-100 lg:w-auto">
+                  <p>{t(`Please Select Your Highest Education Level`)}</p>
+                  <Dropdown
+                    fluid
+                    selection
+                    name="eduLevel"
+                    placeholder={t("Education level")}
+                    header={t("Select Education Level")}
+                    options={eduLevels}
+                    value={eduLevel}
+                    onChange={(e, { value }) => setEduLevel(value)}
+                    disabled={processing}
+                  />
+                </div>
+                <div className="w-100 lg:w-auto">
+                  <p>{t(`Please_select_the_language_of_the_exam`)}</p>
+                  <Dropdown
+                    fluid
+                    selection
+                    name="language"
+                    placeholder={t("Select Language")}
+                    header={t("Select Language")}
+                    options={[
+                      { key: `ar`, text: t(`arabic`), value: `ar` },
+                      { key: `en`, text: t(`english`), value: `en` },
+                    ]}
+                    value={examLang}
+                    onChange={(e, { value }) => setExamLang(value)}
+                    disabled={processing}
+                  />
+                </div>
               </div>
               <Divider />
-              <p> {t(`Email_Adress`)} </p>
-              <Input
-                value={email}
-                onChange={(_, { value }) => {
-                  setEmail(value);
-                }}
-                className="w-100"
-                placeholder={`${t("email")}...`}
-              />
-              <Divider />
+
               <Item.Meta>
                 <p>{t(`which position are you applying for ?`)}</p>
                 <Dropdown
@@ -270,28 +364,19 @@ const Main = ({ startQuiz }) => {
                   disabled={processing}
                 />
                 <br />
-
-                <p>{t(`Please_select_the_language_of_the_exam`)}.</p>
-                <Dropdown
-                  fluid
-                  selection
-                  name="language"
-                  placeholder={t("Select Language")}
-                  header={t("Select Language")}
-                  options={[
-                    { key: `ar`, text: t(`arabic`), value: `ar` },
-                    { key: `en`, text: t(`english`), value: `en` },
-                  ]}
-                  value={examLang}
-                  onChange={(e, { value }) => setExamLang(value)}
-                  disabled={processing}
-                />
               </Item.Meta>
+              <Divider />
+              {/* Google Recaptcha */}
+              <ReCAPTCHA
+                sitekey="6LcRtKQpAAAAAA2gfaEUKIn6AQoj-GPVQk4wgNyH"
+                onChange={onReCAPTCHAChange}
+              />
+              {/* end Google Recaptcha */}
               <Divider />
               <Item.Extra>
                 <Button
                   onClick={fetchData}
-                  disabled={processing}
+                  disabled={processing || !captchaIsChanged}
                   variant="contained"
                   endIcon={currLang == `ar` ? null : <SendIcon />}
                   startIcon={currLang == `en` ? null : <SendIcon />}
@@ -305,7 +390,7 @@ const Main = ({ startQuiz }) => {
         </Item.Group>
       </Segment>
       <br />
-    </Container>
+    </div>
   );
 };
 

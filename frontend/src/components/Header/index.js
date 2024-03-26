@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import InstructionModal from "./../../components/InstructionModal";
 import LanguageSwitcher from "./../../components/LanguageSwitcher";
 
-const Header = () => {
+const Header = ({isQuizStarted}) => {
   const { i18n, t } = useTranslation();
 
   let currLang = i18n.language.toLowerCase();
@@ -12,14 +12,19 @@ const Header = () => {
 
   return (
     <Menu stackable inverted>
-      <Menu.Item header>
-        <h1>{t(`Quiz_Beginning`)}</h1>
-      </Menu.Item>
+      {!isQuizStarted && (
+        <Menu.Item header>
+          <h1>{t(`Quiz_Beginning`)}</h1>
+        </Menu.Item>
+      )}
       <div
         className={`flex justify-center items-center ${currLang == `en` ? `ml-auto mr-9` : `mr-auto ml-5`} mb-4 gap-8 mt-4 `}
       >
-        <InstructionModal className="m-auto" />
-        <LanguageSwitcher />
+        <InstructionModal
+        
+        isQuizStarted={isQuizStarted}
+         className="m-auto" />
+        {!isQuizStarted && <LanguageSwitcher />}
       </div>
     </Menu>
   );

@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { api_url } from "./../utils/base_url";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-export default function BasicDemo({ className }) {
+export default function BasicDemo({ className, isQuizStarted }) {
   const { i18n, t } = useTranslation();
 
   let currentLang = i18n.language;
@@ -54,7 +54,7 @@ export default function BasicDemo({ className }) {
         onHide={() => setVisible(false)}
         className="  w-full md:w-3/5 instructionModalWidth "
       >
-        <LanguageSwitcher className=" w-44 mx-auto mb-7" />
+        {!isQuizStarted && <LanguageSwitcher className=" w-44 mx-auto mb-7" />}
         <div dangerouslySetInnerHTML={{ __html: text }} />
       </Dialog>
     </div>

@@ -18,7 +18,7 @@
   "pauses_left": "Number of pauses left",
   "Oops! Time's up.": "للأسف !! إنتهى الوقت",
   "Hope You did well .": "شكرا لوقتك",
-  "Quite": "Quite",
+  "Quite": "Quit",
   "SA": "Saudi Arabia",
   "AE": "United Arab Emirates",
   "EG": "Egypt",
@@ -37,5 +37,10 @@
   "PS": "Palestine",
   "SD": "Sudan",
   "TN": "Tunisia",
+  "TR": "Turkey",
+  "FR": "France",
+  "GB": "Britain",
+  "AT": "Austria",
+  "ES": "Spain",
   "which position are you applying for ?": "which position are you applying for ?"
 }
